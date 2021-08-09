@@ -18,7 +18,7 @@ namespace CMS.Entity
         }
 
         public Guid Id { get; set; }
-        public Guid? CategoryId { get; set; }
+        public Guid? CatalogId { get; set; }
         public Guid? GroupId { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? Modified { get; set; }
@@ -26,7 +26,9 @@ namespace CMS.Entity
         public Guid? Editor { get; set; }
         public bool? Active { get; set; }
 
-        public virtual Category Category { get; set; }
+        public virtual AppUser AuthorNavigation { get; set; }
+        public virtual Category Catalog { get; set; }
+        public virtual AppUser EditorNavigation { get; set; }
         public virtual Group Group { get; set; }
         public virtual ICollection<HyperlinkValue> HyperlinkValues { get; set; }
         public virtual ICollection<MoneyValue> MoneyValues { get; set; }

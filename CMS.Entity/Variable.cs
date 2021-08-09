@@ -27,6 +27,8 @@ namespace CMS.Entity
         public bool? Active { get; set; }
         public Guid? VariableTypeId { get; set; }
 
+        public virtual AppUser AuthorNavigation { get; set; }
+        public virtual AppUser EditorNavigation { get; set; }
         public virtual VariableType VariableType { get; set; }
         public virtual ICollection<HyperlinkValue> HyperlinkValues { get; set; }
         public virtual ICollection<MoneyValue> MoneyValues { get; set; }

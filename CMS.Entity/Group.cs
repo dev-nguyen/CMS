@@ -21,6 +21,8 @@ namespace CMS.Entity
         public Guid? Editor { get; set; }
         public bool? Active { get; set; }
 
+        public virtual AppUser AuthorNavigation { get; set; }
+        public virtual AppUser EditorNavigation { get; set; }
         public virtual ICollection<Item> Items { get; set; }
         public virtual ICollection<VariableGroup> VariableGroups { get; set; }
     }

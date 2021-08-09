@@ -13,7 +13,7 @@ namespace CMS.Entity
         public Guid? ItemId { get; set; }
         public Guid? Display { get; set; }
 
-        public virtual Category Category { get; set; }
+        public virtual Category Catagory { get; set; }
         public virtual Item Item { get; set; }
         public virtual Variable Variable { get; set; }
     }
