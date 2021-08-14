@@ -1,19 +1,14 @@
-﻿using CMS.ApplicationCore.Repository;
-using CMS.ApplicationCore.UnitOfWork;
+﻿using CMS.ApplicationCore;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CMS.Infrastructure
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly DbContext _context;
+        private readonly CMSContext _context;
 
-        public UnitOfWork(DbContext context)
+        public UnitOfWork(CMSContext context)
         {
             _context = context;
         }

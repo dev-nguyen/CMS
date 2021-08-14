@@ -24,11 +24,21 @@
     <!-- summernote -->
     <link rel="stylesheet" href="/admin/plugins/summernote/summernote-bs4.min.css">
 
-    @RenderSection("Style", false);
+    @RenderSection("Style", false)
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
+    
     <div class="wrapper">
-
+        <div class="d-flex flex-column  justify-content-center" style="position: fixed; background: #2a2a2a55; width: 100%; display: block; text-align: center; height: 100%; color: #FFF; z-index: 99999; visibility: visible; align-items:center">
+            <div class="row">
+                <div class="spinner-grow text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="row">
+                <strong>Collecting data</strong>
+            </div>
+        </div>
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="/admin/dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
@@ -237,7 +247,7 @@
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
-                             with font-awesome or any other icon font library -->
+                         with font-awesome or any other icon font library -->
                         <li class="nav-item menu-open">
                             <a href="#" class="nav-link active">
                                 <i class="nav-icon fas fa-list"></i>
@@ -322,7 +332,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1 name="headerTitle"  class="m-0">Dashboard</h1>
+                            <h1 name="headerTitle" class="m-0">Dashboard</h1>
                         </div><!-- /.col -->
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
@@ -381,11 +391,11 @@
     <script src="/admin/dist/js/demo.js"></script>
     <script>
 
-            (function () {
-                function loadCatalog() {
+        (function () {
+            function loadCatalog() {
 
-                }
-            })()
+            }
+        })()
     </script>
 
     @RenderSection("Script", false);

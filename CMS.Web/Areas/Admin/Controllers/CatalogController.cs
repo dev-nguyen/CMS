@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 namespace CMS.Web.Areas.Admin.Controllers
 {
     //[Route("/Catalog")]
+    //[Authorize]
     [Area("Admin")]
     [Route("[controller]/[action]")]
     public class CatalogController : Controller

@@ -1,0 +1,229 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Registration Page (v2)</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/admin/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/admin/dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition register-page">
+    <div class="register-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <a href="../../index2.html" class="h1"><b>Admin</b>LTE</a>
+            </div>
+            <div class="card-body">
+                <p class="login-box-msg">Register a new membership</p>
+
+                <form id="frmRegister" action="/Account/Register" method="post">
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control" name="Email" placeholder="Email">
+                        <span class="input-group-append" style="display:none">
+                            <button class="btn rounded-pill border-0 ml-n5" type="button">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" name="Password" placeholder="Password" value="Admin@123">
+                        <span class="input-group-append">
+                            <button id="pass" class="btn rounded-pill border-0 ml-n5" type="button">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" name="ConfirmPassword" placeholder="Retype password" value="Admin@123">
+                        <span class="input-group-append">
+                            <button id="confrimPass" class="btn rounded-pill border-0 ml-n5" type="button">
+                                <i class="fas fa-eye-slash"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="icheck-primary input-group">
+                                <input type="checkbox" id="agreeTerms" name="terms" value="agree">
+                                <label for="agreeTerms">
+                                    I agree to the <a href="#">terms</a>
+                                </label>
+                            </div>
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary btn-block">Register</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+
+                <div class="social-auth-links text-center">
+                    <a href="#" class="btn btn-block btn-primary">
+                        <i class="fab fa-facebook mr-2"></i>
+                        Sign up using Facebook
+                    </a>
+                    <a href="#" class="btn btn-block btn-danger">
+                        <i class="fab fa-google-plus mr-2"></i>
+                        Sign up using Google+
+                    </a>
+                </div>
+
+                <a href="/Account/Login" class="text-center">I already have a membership</a>
+            </div>
+            <!-- /.form-box -->
+        </div><!-- /.card -->
+    </div>
+    <!-- /.register-box -->
+    <!-- jQuery -->
+    <script src="/admin/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/admin/dist/js/adminlte.min.js"></script>
+
+    <!--Custom-->
+    <script src="/admin/dist/js/custom.js"></script>
+    <script src="/admin/plugins/jquery-validate/jquery.validate.js"></script>
+    <script src="/admin/plugins/jquery-validate/additional-methods.js"></script>
+
+    <script>
+        showPassword('pass', 'Password', 'fas fa-eye-slash', 'fas fa-eye');
+        showPassword('confrimPass', 'ConfirmPassword', 'fas fa-eye-slash', 'fas fa-eye');
+
+        $('#frmRegister').validate({
+            validClass: "success",
+            submitHandler: function (form) {
+                form.submit();            },
+            rules: {
+                Email: {
+                    required: true,
+                    email: true,
+                    //existCheck:true
+                    remote: {
+                        url: '/Account/CheckUserExist?' + $('input[name= "Email"]').val(),
+                        type: 'get',
+                        beforeSend: function () {
+                            var parent = $('input[name= "Email"]').next();
+                            $('input[name= "Email"]').prop('disabled', true);
+                            parent.show();
+                        },
+                        complete: function () {
+                            var parent = $('input[name= "Email"]').next();
+                            $('input[name= "Email"]').prop('disabled', false);
+                            parent.hide();
+                        }
+                    }
+                },
+                Password: {
+                    required: true,
+                    pwcheck: true,
+                    minlength: 6
+                },
+                ConfirmPassword: {
+                    required: true,
+                    equalTo:'input[name= "Password"]'
+                },
+                terms: {
+                    required:true
+                }
+            },
+            messages: {
+                Email: {
+                    required: 'Email is not empty',
+                    email: 'Invalid email',
+                    remote: jQuery.validator.format("{0} is already taken, please enter a different address.")
+                },
+                Password: {
+                    required: 'Password is not empty',
+                    minlength: 'Password must be at least 6 characters'
+                },
+                ConfirmPassword: {
+                    required: 'Confirm password is not empty',
+                    equalTo: 'Password is not match'
+                },
+                terms: {
+                    required: "Please accept the term"
+                }
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.input-group').append(error);
+            },
+            highlignt: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+            //success: function (label) {
+            //    // set &nbsp; as text for IE
+            //    //label.html("&nbsp;").addClass("checked");
+            //    label.html(`<div class="input-group-append">
+            //                <div class="input-group-text">
+            //                    <span class="fas fa-envelope"></span>
+            //                </div>
+            //            </div>`).addClass("checked input-group-append");
+            //},
+        });
+
+        $.validator.addMethod('pwcheck', function (value, element, params) {
+            return /^[A-Za-z0-9\d=!\-@@._*]*$/.test(value) //consists of only these
+                && /[a-z]/.test(value) //has a lowercase letter
+                && /\d/.test(value) // has a digit
+        }, 'Password is invalid');
+
+        $.validator.addMethod('existCheck', function (value, element, params) {
+            let isExist = false;
+            var start_time = new Date().getTime();
+            let ajaxObj = checkUser();
+            ajaxObj.done(function (data) {
+                var request_time = new Date().getTime() - start_time;
+                console.log(`Time : ${request_time}`);
+                if (data == false)
+                    isExist = true;
+                else
+                    isExist = false;
+            });
+            ajaxObj.fail(function (jqXHR, textStatus, errorThrown) {
+                alert('error');
+            });
+            return isExist;
+        }, 'Email is exist');
+
+        var checkUser = function () {
+            var data = {
+                Email: $('input[name= "Email"]').val(),
+                Password: $('input[name= "Password"]').val(),
+                ConfirmPassword: $('input[name= "ConfirmPassword"]').val()
+            };
+            var ajax = $.ajax({
+                async: false,
+                url: ' @Url.Action("CheckUserExist","Account")',
+                //dataType: 'json',
+                contentType: 'application/json',
+                type: 'post',
+                data: JSON.stringify(data)
+                //success: function (data) {
+                //    alert('Success');
+                //},
+                //error: function (jqXHR, textStatus, errorThrown) {
+                //    alert('Error');
+                //}
+            });
+
+            return ajax;
+        }       
+    </script>
+
+</body>
+</html>

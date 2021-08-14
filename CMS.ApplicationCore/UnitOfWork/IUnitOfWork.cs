@@ -1,11 +1,6 @@
-﻿using CMS.ApplicationCore.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace CMS.ApplicationCore.UnitOfWork
+namespace CMS.ApplicationCore
 {
     public interface IUnitOfWork
     {

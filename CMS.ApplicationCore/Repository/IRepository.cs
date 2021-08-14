@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace CMS.ApplicationCore.Repository
+namespace CMS.ApplicationCore
 {
     public interface IRepository<T> where T:class
     {

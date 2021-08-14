@@ -1,11 +1,6 @@
-﻿using CMS.ApplicationCore.Service;
-using CMS.ApplicationCore.UnitOfWork;
+﻿using CMS.ApplicationCore;
+using CMS.ApplicationCore.Service;
 using CMS.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CMS.Infrastructure.Service
 {

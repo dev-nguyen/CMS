@@ -1,11 +1,8 @@
-﻿using CMS.Web.Models;
+﻿using CMS.Infrastructure;
+using CMS.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CMS.Web.Controllers
 {
@@ -16,10 +13,17 @@ namespace CMS.Web.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            Testing a = new Testing();
+
+            //var b = Request.Headers["origin"];
+            //a.SendTestingEmail();
         }
 
         public IActionResult Index()
         {
+            var path = HttpContext.Request.Path;
+            var host = HttpContext.Request.Host;
+
             return View();
         }
 

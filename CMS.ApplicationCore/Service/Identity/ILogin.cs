@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CMS.ApplicationCore
+namespace CMS.ApplicationCore.Service
 {
-    class DependencyInjection
+    public interface ILogin
     {
+        public void Login();
     }
 }
