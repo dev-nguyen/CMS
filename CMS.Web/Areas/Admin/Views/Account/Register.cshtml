@@ -99,82 +99,82 @@
         showPassword('pass', 'Password', 'fas fa-eye-slash', 'fas fa-eye');
         showPassword('confrimPass', 'ConfirmPassword', 'fas fa-eye-slash', 'fas fa-eye');
 
-        $('#frmRegister').validate({
-            validClass: "success",
-            submitHandler: function (form) {
-                form.submit();            },
-            rules: {
-                Email: {
-                    required: true,
-                    email: true,
-                    //existCheck:true
-                    remote: {
-                        url: '/Account/CheckUserExist?' + $('input[name= "Email"]').val(),
-                        type: 'get',
-                        beforeSend: function () {
-                            var parent = $('input[name= "Email"]').next();
-                            $('input[name= "Email"]').prop('disabled', true);
-                            parent.show();
-                        },
-                        complete: function () {
-                            var parent = $('input[name= "Email"]').next();
-                            $('input[name= "Email"]').prop('disabled', false);
-                            parent.hide();
-                        }
-                    }
-                },
-                Password: {
-                    required: true,
-                    pwcheck: true,
-                    minlength: 6
-                },
-                ConfirmPassword: {
-                    required: true,
-                    equalTo:'input[name= "Password"]'
-                },
-                terms: {
-                    required:true
-                }
-            },
-            messages: {
-                Email: {
-                    required: 'Email is not empty',
-                    email: 'Invalid email',
-                    remote: jQuery.validator.format("{0} is already taken, please enter a different address.")
-                },
-                Password: {
-                    required: 'Password is not empty',
-                    minlength: 'Password must be at least 6 characters'
-                },
-                ConfirmPassword: {
-                    required: 'Confirm password is not empty',
-                    equalTo: 'Password is not match'
-                },
-                terms: {
-                    required: "Please accept the term"
-                }
-            },
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.input-group').append(error);
-            },
-            highlignt: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            }
-            //success: function (label) {
-            //    // set &nbsp; as text for IE
-            //    //label.html("&nbsp;").addClass("checked");
-            //    label.html(`<div class="input-group-append">
-            //                <div class="input-group-text">
-            //                    <span class="fas fa-envelope"></span>
-            //                </div>
-            //            </div>`).addClass("checked input-group-append");
-            //},
-        });
+        //$('#frmRegister').validate({
+        //    validClass: "success",
+        //    submitHandler: function (form) {
+        //        form.submit();            },
+        //    rules: {
+        //        Email: {
+        //            required: true,
+        //            email: true
+        //            //existCheck:true
+        //            //remote: {
+        //            //    url: '/Account/CheckUserExist?' + $('input[name= "Email"]').val(),
+        //            //    type: 'get',
+        //            //    beforeSend: function () {
+        //            //        var parent = $('input[name= "Email"]').next();
+        //            //        $('input[name= "Email"]').prop('disabled', true);
+        //            //        parent.show();
+        //            //    },
+        //            //    complete: function () {
+        //            //        var parent = $('input[name= "Email"]').next();
+        //            //        $('input[name= "Email"]').prop('disabled', false);
+        //            //        parent.hide();
+        //            //    }
+        //            //}
+        //        },
+        //        Password: {
+        //            required: true,
+        //            pwcheck: true,
+        //            minlength: 6
+        //        },
+        //        ConfirmPassword: {
+        //            required: true,
+        //            equalTo:'input[name= "Password"]'
+        //        },
+        //        terms: {
+        //            required:true
+        //        }
+        //    },
+        //    messages: {
+        //        Email: {
+        //            required: 'Email is not empty',
+        //            email: 'Invalid email',
+        //            remote: jQuery.validator.format("{0} is already taken, please enter a different address.")
+        //        },
+        //        Password: {
+        //            required: 'Password is not empty',
+        //            minlength: 'Password must be at least 6 characters'
+        //        },
+        //        ConfirmPassword: {
+        //            required: 'Confirm password is not empty',
+        //            equalTo: 'Password is not match'
+        //        },
+        //        terms: {
+        //            required: "Please accept the term"
+        //        }
+        //    },
+        //    errorElement: 'span',
+        //    errorPlacement: function (error, element) {
+        //        error.addClass('invalid-feedback');
+        //        element.closest('.input-group').append(error);
+        //    },
+        //    highlignt: function (element, errorClass, validClass) {
+        //        $(element).addClass('is-invalid');
+        //    },
+        //    unhighlight: function (element, errorClass, validClass) {
+        //        $(element).removeClass('is-invalid');
+        //    }
+        //    //success: function (label) {
+        //    //    // set &nbsp; as text for IE
+        //    //    //label.html("&nbsp;").addClass("checked");
+        //    //    label.html(`<div class="input-group-append">
+        //    //                <div class="input-group-text">
+        //    //                    <span class="fas fa-envelope"></span>
+        //    //                </div>
+        //    //            </div>`).addClass("checked input-group-append");
+        //    //},
+        //});
 
         $.validator.addMethod('pwcheck', function (value, element, params) {
             return /^[A-Za-z0-9\d=!\-@@._*]*$/.test(value) //consists of only these

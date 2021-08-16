@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace CMS.Infrastructure
 {
@@ -17,27 +18,47 @@ namespace CMS.Infrastructure
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
 
         public AuthService(
             UserManager<AppUser> userManager,
             RoleManager<AppRole> roleManager,
-            SignInManager<AppUser> signInManager)
+            SignInManager<AppUser> signInManager,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+
+            _httpContextAccessor = httpContextAccessor;
         }
 
+        public string ConfirmUrl { get; set; }
 
-        public async void CreateUser(RegisterRequest request)
+        public async Task CreateUser(RegisterRequest request)
         {
-            AppUser appUser = new AppUser {
+            var appUser = new AppUser
+            {
                 Email = request.Email,
                 UserName = request.Email
             };
             var isCreated = await _userManager.CreateAsync(appUser, request.Password);
             if (isCreated.Succeeded)
-            { 
+            {
+                var token = Uri.EscapeDataString(await _userManager.GenerateEmailConfirmationTokenAsync(appUser));
+                string schema = _httpContextAccessor.HttpContext.Request.Scheme;
+                string host = _httpContextAccessor.HttpContext.Request.Host.ToString();
+                var userId = appUser.Id;
+                var activeUrl = $"{schema}://{host}{this.ConfirmUrl}?userId={userId}&token={token}";
+
+                EmailConfig email = new EmailConfig();
+                email.To = new string[] { appUser.Email };
+                email.Subject = "Active account";
+                email.Body = $"Please click on the link below to active your account. <p> <a href=\"{activeUrl}\"> Active </a> </p>";
+
+                IEmailSender sender = new GoogleEmailSender(email, "1035158221116-qv9p42ldlbcljjsc95a1058mp4tuv2vt.apps.googleusercontent.com", "D95ItqksMp9-vauoLQqvhAag");
+                sender.Send();
             }
         }
 
@@ -59,15 +80,47 @@ namespace CMS.Infrastructure
             return userId;
         }
 
-        public async Task<bool> ConfirmEmail(string userId, string code)
+        public async Task<bool> ConfirmEmail(string userId, string token)
         {
             var user = await _userManager.FindByIdAsync(userId);
-            var result = await _userManager.ConfirmEmailAsync(user, code);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
                 return true;
             else
                 return false;
         }
+
+        public async Task<AppUser> GetUserByUserEmail(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(AppUser user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+        public async Task<bool> ResetPasswordAsync(ResetPasswordRequest request)
+        {
+            bool result = false;
+            var user = await GetUserByUserEmail(request.Email);
+            var status = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
+            if (status.Succeeded)
+                result = true;
+
+            return result;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
         public async Task<bool> Login(LoginRequest request)
         {
@@ -83,27 +136,27 @@ namespace CMS.Infrastructure
             return isLoginSuccess;
         }
 
-        public void Logout()
+        public async Task Logout()
         {
-            _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();
         }
-        public async Task<string> GetTokenResetPassword(ForgotPasswordRequest request)
-        {
-            string code = string.Empty;
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user != null)
-            {
-                code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            }
-            return code;
-        }
+        //public async Task<string> GetTokenResetPassword(ForgotPasswordRequest request)
+        //{
+        //    string code = string.Empty;
+        //    var user = await _userManager.FindByEmailAsync(request.Email);
+        //    if (user != null)
+        //    {
+        //        code = await _userManager.GeneratePasswordResetTokenAsync(user);
+        //    }
+        //    return code;
+        //}
 
-        public async Task<string> GetTokenVerifyEmail(AppUser user)
-        {
-            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        }
+        //public async Task<string> GetTokenVerifyEmail(AppUser user)
+        //{
+        //    return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        //}
 
-        public async Task<AppUser> GetUserByUserId(Guid userId)
+        public async Task<AppUser> GetUserByUserId(string userId)
         {
             return await _userManager.FindByIdAsync(userId.ToString());
         }
@@ -116,6 +169,8 @@ namespace CMS.Infrastructure
 
             return isExist;
         }
+
+   
 
 
         //private async void SendVerificationEmail(AppUser user)

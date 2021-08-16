@@ -12,6 +12,7 @@ namespace CMS.ApplicationCore
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection service)
         {
+            service.AddHttpContextAccessor();
             service.AddDbContext<CMSContext>(options =>
             {
                 options.UseSqlServer("Server=.;Database=CMS;uid=sa;pwd=Admin@123");
@@ -36,10 +37,11 @@ namespace CMS.ApplicationCore
             service.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
-                options.Cookie.Name = "Default Cookie";
+                options.Cookie.Name = "Default_Cookie";
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromHours(24);
             });
+            service.Configure<DataProtectionTokenProviderOptions>(opt => opt.TokenLifespan = TimeSpan.FromHours(2));
 
             service.AddAuthentication().AddGoogle(opts =>
             {

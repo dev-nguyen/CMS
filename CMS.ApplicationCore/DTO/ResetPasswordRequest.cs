@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace CMS.ApplicationCore.DTO
 {
-    public class LoginRequest
+    public class ResetPasswordRequest
     {
+        public string Token { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public bool Remember { get; set; }
-        public bool Lock { get; set; }
-        public string ReturnUrl { get; set; }
+        public string ConfirmPassword { get; set; }
     }
 }

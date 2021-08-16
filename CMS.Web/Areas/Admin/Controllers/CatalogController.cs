@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace CMS.Web.Areas.Admin.Controllers
 {
     //[Route("/Catalog")]
-    //[Authorize]
+    [Authorize]
     [Area("Admin")]
     [Route("[controller]/[action]")]
     public class CatalogController : Controller

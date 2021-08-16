@@ -10,14 +10,22 @@ namespace CMS.ApplicationCore.Service
 {
     public interface IAuthService
     {
-
+        public string ConfirmUrl { get; set; }
+        public Task CreateUser(RegisterRequest request);
         public Task<bool> CheckExistEmail(string email);
-        public Task<Guid> RegisterAsync(RegisterRequest request);        
+        public Task<Guid> RegisterAsync(RegisterRequest request);
+        public Task<string> GeneratePasswordResetTokenAsync(AppUser user);
+        public Task<AppUser> GetUserByUserEmail(string email);
+        public Task<bool> ResetPasswordAsync(ResetPasswordRequest request);
+
+
+
+
         public Task<bool> Login(LoginRequest request);
-        public void Logout();
-        public Task<string> GetTokenResetPassword(ForgotPasswordRequest request);
-        public Task<string> GetTokenVerifyEmail(AppUser user);
-        public Task<AppUser> GetUserByUserId(Guid userId);
-        public Task<bool> ConfirmEmail(string userId, string code);
+        public Task Logout();
+        //public Task<string> GetTokenResetPassword(ForgotPasswordRequest request);
+        //public Task<string> GetTokenVerifyEmail(AppUser user);
+        public Task<AppUser> GetUserByUserId(string userId);
+        public Task<bool> ConfirmEmail(string userId, string token);
     }
 }
