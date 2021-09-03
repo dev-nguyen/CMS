@@ -20,30 +20,37 @@ namespace CMS.Infrastructure
         }
 
         public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Group> Groups { get; set; }
-        public virtual DbSet<HyperlinkValue> HyperlinkValues { get; set; }
+        public virtual DbSet<DateTimeValue> DateTimeValues { get; set; }
+        public virtual DbSet<FloatValue> FloatValues { get; set; }
         public virtual DbSet<Item> Items { get; set; }
-        public virtual DbSet<MoneyValue> MoneyValues { get; set; }
         public virtual DbSet<NumberValue> NumberValues { get; set; }
+        public virtual DbSet<OptionSource> OptionSources { get; set; }
+        public virtual DbSet<OptionValue> OptionValues { get; set; }
+        public virtual DbSet<ReferenceSource> ReferenceSources { get; set; }
+        public virtual DbSet<ReferenceSourceType> ReferenceSourceTypes { get; set; }
         public virtual DbSet<ReferenceValue> ReferenceValues { get; set; }
         public virtual DbSet<StringValue> StringValues { get; set; }
         public virtual DbSet<TextValue> TextValues { get; set; }
+        public virtual DbSet<TrueFalseValue> TrueFalseValues { get; set; }
         public virtual DbSet<Variable> Variables { get; set; }
-        public virtual DbSet<VariableGroup> VariableGroups { get; set; }
+        public virtual DbSet<VariableSet> VariableSets { get; set; }
+        public virtual DbSet<VariableSetDetail> VariableSetDetails { get; set; }
         public virtual DbSet<VariableType> VariableTypes { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=.;Database=CMS;uid=sa;pwd=Admin@123");
+                optionsBuilder.UseSqlServer("Server=.;Database=Test;uid=sa;pwd=Admin@123");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
             modelBuilder.Entity<Category>(entity =>
@@ -52,63 +59,62 @@ namespace CMS.Infrastructure
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Created).HasColumnType("date");
+                entity.Property(e => e.Created).HasColumnType("datetime");
 
-                entity.Property(e => e.Modified).HasColumnType("date");
-
-                entity.HasOne(d => d.AuthorNavigation)
-                    .WithMany(p => p.CategoryAuthorNavigations)
-                    .HasForeignKey(d => d.Author)
-                    .HasConstraintName("FK_Category_AspNetUsers");
-
-                entity.HasOne(d => d.EditorNavigation)
-                    .WithMany(p => p.CategoryEditorNavigations)
-                    .HasForeignKey(d => d.Editor)
-                    .HasConstraintName("FK_Category_AspNetUsers1");
-            });
-
-            modelBuilder.Entity<Group>(entity =>
-            {
-                entity.ToTable("Group");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Created).HasColumnType("date");
-
-                entity.Property(e => e.Modified).HasColumnType("date");
+                entity.Property(e => e.Modified).HasColumnType("datetime");
 
                 entity.Property(e => e.Title).HasMaxLength(50);
 
-                entity.HasOne(d => d.AuthorNavigation)
-                    .WithMany(p => p.GroupAuthorNavigations)
-                    .HasForeignKey(d => d.Author)
-                    .HasConstraintName("FK_Group_AspNetUsers");
+                entity.HasOne(d => d.Author)
+                    .WithMany(p => p.CategoryAuthors)
+                    .HasForeignKey(d => d.AuthorId)
+                    .HasConstraintName("FK_Category_AspNetUsers");
 
-                entity.HasOne(d => d.EditorNavigation)
-                    .WithMany(p => p.GroupEditorNavigations)
-                    .HasForeignKey(d => d.Editor)
-                    .HasConstraintName("FK_Group_AspNetUsers1");
+                entity.HasOne(d => d.Editor)
+                    .WithMany(p => p.CategoryEditors)
+                    .HasForeignKey(d => d.EditorId)
+                    .HasConstraintName("FK_Category_AspNetUsers1");
+
+                entity.HasOne(d => d.VariableSet)
+                    .WithMany(p => p.Categories)
+                    .HasForeignKey(d => d.VariableSetId)
+                    .HasConstraintName("FK_Category_VariableSet");
             });
 
-            modelBuilder.Entity<HyperlinkValue>(entity =>
+            modelBuilder.Entity<DateTimeValue>(entity =>
             {
-                entity.ToTable("HyperlinkValue");
+                entity.ToTable("DateTimeValue");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Text).HasMaxLength(50);
-
-                entity.Property(e => e.Value).HasMaxLength(50);
+                entity.Property(e => e.Value).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Item)
-                    .WithMany(p => p.HyperlinkValues)
+                    .WithMany(p => p.DateTimeValues)
                     .HasForeignKey(d => d.ItemId)
-                    .HasConstraintName("FK_HyperlinkValue_Item");
+                    .HasConstraintName("FK_DateTimeValue_Item");
 
                 entity.HasOne(d => d.Variable)
-                    .WithMany(p => p.HyperlinkValues)
+                    .WithMany(p => p.DateTimeValues)
                     .HasForeignKey(d => d.VariableId)
-                    .HasConstraintName("FK_HyperlinkValue_Variable");
+                    .HasConstraintName("FK_DateTimeValue_Variable");
+            });
+
+            modelBuilder.Entity<FloatValue>(entity =>
+            {
+                entity.ToTable("FloatValue");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.FloatValues)
+                    .HasForeignKey(d => d.ItemId)
+                    .HasConstraintName("FK_FloatValue_Item");
+
+                entity.HasOne(d => d.Variable)
+                    .WithMany(p => p.FloatValues)
+                    .HasForeignKey(d => d.VariableId)
+                    .HasConstraintName("FK_FloatValue_Variable");
             });
 
             modelBuilder.Entity<Item>(entity =>
@@ -117,48 +123,24 @@ namespace CMS.Infrastructure
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Created).HasColumnType("date");
+                entity.Property(e => e.Created).HasColumnType("datetime");
 
-                entity.Property(e => e.Modified).HasColumnType("date");
+                entity.Property(e => e.Modified).HasColumnType("datetime");
 
-                entity.HasOne(d => d.AuthorNavigation)
-                    .WithMany(p => p.ItemAuthorNavigations)
-                    .HasForeignKey(d => d.Author)
+                entity.HasOne(d => d.Author)
+                    .WithMany(p => p.ItemAuthors)
+                    .HasForeignKey(d => d.AuthorId)
                     .HasConstraintName("FK_Item_AspNetUsers");
 
-                entity.HasOne(d => d.Catalog)
+                entity.HasOne(d => d.Category)
                     .WithMany(p => p.Items)
-                    .HasForeignKey(d => d.CatalogId)
+                    .HasForeignKey(d => d.CategoryId)
                     .HasConstraintName("FK_Item_Category");
 
-                entity.HasOne(d => d.EditorNavigation)
-                    .WithMany(p => p.ItemEditorNavigations)
-                    .HasForeignKey(d => d.Editor)
+                entity.HasOne(d => d.Editor)
+                    .WithMany(p => p.ItemEditors)
+                    .HasForeignKey(d => d.EditorId)
                     .HasConstraintName("FK_Item_AspNetUsers1");
-
-                entity.HasOne(d => d.Group)
-                    .WithMany(p => p.Items)
-                    .HasForeignKey(d => d.GroupId)
-                    .HasConstraintName("FK_Item_Group");
-            });
-
-            modelBuilder.Entity<MoneyValue>(entity =>
-            {
-                entity.ToTable("MoneyValue");
-
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Value).HasColumnType("money");
-
-                entity.HasOne(d => d.Item)
-                    .WithMany(p => p.MoneyValues)
-                    .HasForeignKey(d => d.ItemId)
-                    .HasConstraintName("FK_MoneyValue_Item");
-
-                entity.HasOne(d => d.Variable)
-                    .WithMany(p => p.MoneyValues)
-                    .HasForeignKey(d => d.VariableId)
-                    .HasConstraintName("FK_MoneyValue_Variable");
             });
 
             modelBuilder.Entity<NumberValue>(entity =>
@@ -167,15 +149,79 @@ namespace CMS.Infrastructure
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
+                entity.Property(e => e.Value)
+                    .HasMaxLength(10)
+                    .IsFixedLength(true);
+
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.NumberValues)
                     .HasForeignKey(d => d.ItemId)
-                    .HasConstraintName("FK_NumberValue_Item");
+                    .HasConstraintName("FK_NumberValue_Item1");
 
                 entity.HasOne(d => d.Variable)
                     .WithMany(p => p.NumberValues)
                     .HasForeignKey(d => d.VariableId)
-                    .HasConstraintName("FK_NumberValue_Attribute");
+                    .HasConstraintName("FK_NumberValue_Variable1");
+            });
+
+            modelBuilder.Entity<OptionSource>(entity =>
+            {
+                entity.ToTable("OptionSource");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Variable)
+                    .WithMany(p => p.OptionSources)
+                    .HasForeignKey(d => d.VariableId)
+                    .HasConstraintName("FK_OptionSource_Variable");
+            });
+
+            modelBuilder.Entity<OptionValue>(entity =>
+            {
+                entity.ToTable("OptionValue");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.OptionValues)
+                    .HasForeignKey(d => d.ItemId)
+                    .HasConstraintName("FK_OptionValue_Item");
+
+                entity.HasOne(d => d.Option)
+                    .WithMany(p => p.OptionValues)
+                    .HasForeignKey(d => d.OptionId)
+                    .HasConstraintName("FK_OptionValue_OptionSource");
+
+                entity.HasOne(d => d.Variable)
+                    .WithMany(p => p.OptionValues)
+                    .HasForeignKey(d => d.VariableId)
+                    .HasConstraintName("FK_OptionValue_Variable");
+            });
+
+            modelBuilder.Entity<ReferenceSource>(entity =>
+            {
+                entity.ToTable("ReferenceSource");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Source)
+                    .WithMany(p => p.ReferenceSources)
+                    .HasForeignKey(d => d.SourceId)
+                    .HasConstraintName("FK_ReferenceSource_Category");
+
+                entity.HasOne(d => d.Variable)
+                    .WithMany(p => p.ReferenceSources)
+                    .HasForeignKey(d => d.VariableId)
+                    .HasConstraintName("FK_ReferenceSource_Variable");
+            });
+
+            modelBuilder.Entity<ReferenceSourceType>(entity =>
+            {
+                entity.ToTable("ReferenceSourceType");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Title).HasMaxLength(50);
             });
 
             modelBuilder.Entity<ReferenceValue>(entity =>
@@ -184,15 +230,15 @@ namespace CMS.Infrastructure
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.HasOne(d => d.Catagory)
-                    .WithMany(p => p.ReferenceValues)
-                    .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK_ReferenceValue_Category");
-
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.ReferenceValues)
                     .HasForeignKey(d => d.ItemId)
                     .HasConstraintName("FK_ReferenceValue_Item");
+
+                entity.HasOne(d => d.ReferenceSource)
+                    .WithMany(p => p.ReferenceValues)
+                    .HasForeignKey(d => d.ReferenceSourceId)
+                    .HasConstraintName("FK_ReferenceValue_ReferenceSource");
 
                 entity.HasOne(d => d.Variable)
                     .WithMany(p => p.ReferenceValues)
@@ -236,27 +282,58 @@ namespace CMS.Infrastructure
                     .HasConstraintName("FK_TextValue_Variable");
             });
 
+            modelBuilder.Entity<TrueFalseValue>(entity =>
+            {
+                entity.ToTable("TrueFalseValue");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Value)
+                    .HasMaxLength(10)
+                    .IsFixedLength(true);
+
+                entity.HasOne(d => d.Item)
+                    .WithMany(p => p.TrueFalseValues)
+                    .HasForeignKey(d => d.ItemId)
+                    .HasConstraintName("FK_TrueFalseValue_Item");
+
+                entity.HasOne(d => d.Variable)
+                    .WithMany(p => p.TrueFalseValues)
+                    .HasForeignKey(d => d.VariableId)
+                    .HasConstraintName("FK_TrueFalseValue_Variable");
+            });
+
             modelBuilder.Entity<Variable>(entity =>
             {
                 entity.ToTable("Variable");
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Created).HasColumnType("date");
+                entity.Property(e => e.Created).HasColumnType("datetime");
 
-                entity.Property(e => e.Modified).HasColumnType("date");
+                entity.Property(e => e.Modified).HasColumnType("datetime");
 
                 entity.Property(e => e.Title).HasMaxLength(50);
 
-                entity.HasOne(d => d.AuthorNavigation)
-                    .WithMany(p => p.VariableAuthorNavigations)
-                    .HasForeignKey(d => d.Author)
+                entity.HasOne(d => d.Author)
+                    .WithMany(p => p.VariableAuthors)
+                    .HasForeignKey(d => d.AuthorId)
                     .HasConstraintName("FK_Variable_AspNetUsers");
 
-                entity.HasOne(d => d.EditorNavigation)
-                    .WithMany(p => p.VariableEditorNavigations)
-                    .HasForeignKey(d => d.Editor)
+                entity.HasOne(d => d.Editor)
+                    .WithMany(p => p.VariableEditors)
+                    .HasForeignKey(d => d.EditorId)
                     .HasConstraintName("FK_Variable_AspNetUsers1");
+
+                entity.HasOne(d => d.Source)
+                    .WithMany(p => p.Variables)
+                    .HasForeignKey(d => d.SourceId)
+                    .HasConstraintName("FK_Variable_Category");
+
+                entity.HasOne(d => d.SourceType)
+                    .WithMany(p => p.Variables)
+                    .HasForeignKey(d => d.SourceTypeId)
+                    .HasConstraintName("FK_Variable_ReferenceSourceType");
 
                 entity.HasOne(d => d.VariableType)
                     .WithMany(p => p.Variables)
@@ -264,24 +341,46 @@ namespace CMS.Infrastructure
                     .HasConstraintName("FK_Variable_VariableType");
             });
 
-            modelBuilder.Entity<VariableGroup>(entity =>
+            modelBuilder.Entity<VariableSet>(entity =>
             {
-                entity.HasKey(e => new { e.GroupId, e.VariableId })
-                    .HasName("PK_AttributeGroup");
+                entity.ToTable("VariableSet");
 
-                entity.ToTable("VariableGroup");
+                entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.HasOne(d => d.Group)
-                    .WithMany(p => p.VariableGroups)
-                    .HasForeignKey(d => d.GroupId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_VariableGroup_Group");
+                entity.Property(e => e.Created).HasColumnType("datetime");
+
+                entity.Property(e => e.Modified).HasColumnType("datetime");
+
+                entity.Property(e => e.Title).HasMaxLength(50);
+
+                entity.HasOne(d => d.Author)
+                    .WithMany(p => p.VariableSetAuthors)
+                    .HasForeignKey(d => d.AuthorId)
+                    .HasConstraintName("FK_VariableSet_AspNetUsers");
+
+                entity.HasOne(d => d.Editor)
+                    .WithMany(p => p.VariableSetEditors)
+                    .HasForeignKey(d => d.EditorId)
+                    .HasConstraintName("FK_VariableSet_AspNetUsers1");
+            });
+
+            modelBuilder.Entity<VariableSetDetail>(entity =>
+            {
+                entity.HasKey(e => new { e.VariableSetId, e.VariableId });
+
+                entity.ToTable("VariableSetDetail");
 
                 entity.HasOne(d => d.Variable)
-                    .WithMany(p => p.VariableGroups)
+                    .WithMany(p => p.VariableSetDetails)
                     .HasForeignKey(d => d.VariableId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_VariableGroup_Variable");
+                    .HasConstraintName("FK_VariableSetDetail_Variable");
+
+                entity.HasOne(d => d.VariableSet)
+                    .WithMany(p => p.VariableSetDetails)
+                    .HasForeignKey(d => d.VariableSetId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_VariableSetDetail_VariableSet");
             });
 
             modelBuilder.Entity<VariableType>(entity =>
@@ -290,20 +389,22 @@ namespace CMS.Infrastructure
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.Created).HasColumnType("date");
+                entity.Property(e => e.Created).HasColumnType("datetime");
 
-                entity.Property(e => e.Modified).HasColumnType("date");
+                entity.Property(e => e.Modified).HasColumnType("datetime");
 
-                entity.Property(e => e.Title).HasMaxLength(50);
+                entity.Property(e => e.Title)
+                    .HasMaxLength(10)
+                    .IsFixedLength(true);
 
-                entity.HasOne(d => d.AuthorNavigation)
-                    .WithMany(p => p.VariableTypeAuthorNavigations)
-                    .HasForeignKey(d => d.Author)
+                entity.HasOne(d => d.Author)
+                    .WithMany(p => p.VariableTypeAuthors)
+                    .HasForeignKey(d => d.AuthorId)
                     .HasConstraintName("FK_VariableType_AspNetUsers");
 
-                entity.HasOne(d => d.EditorNavigation)
-                    .WithMany(p => p.VariableTypeEditorNavigations)
-                    .HasForeignKey(d => d.Editor)
+                entity.HasOne(d => d.Editor)
+                    .WithMany(p => p.VariableTypeEditors)
+                    .HasForeignKey(d => d.EditorId)
                     .HasConstraintName("FK_VariableType_AspNetUsers1");
             });
 

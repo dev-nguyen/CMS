@@ -1,0 +1,73 @@
+﻿@*@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions{
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Context).RequestToken;
+    }
+}
+
+<input type="hidden" id="RequestVerificationToken"
+       name="RequestVerificationToken" value="@GetAntiXsrfRequestToken()">*@
+
+
+@Html.AntiForgeryToken()
+<form id="frm" method="post" action="/Admin/Category/Create" @*onsubmit="return ajaxSubmit(this, 'my-modal')"*@>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Email address</label>
+        <input type="text" class="form-control" name="Title" placeholder="Title">
+    </div>
+    <div class="form-group">
+        <label class="form-group" for="exampleInputEmail1">Email address</label>
+        <div class="input-group">
+            <select class="form-control">
+                <option>aaaaaaaaaaaaaa</option>
+                <option>aaaaaaaaaaaaaa</option>
+                <option>aaaaaaaaaaaaaa</option>
+                <option>aaaaaaaaaaaaaa</option>
+            </select>
+            <span class="input-group-append">
+                <button type="button" class="btn btn-default btn-flat">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+            </span>
+        </div>
+    </div>
+</form>
+
+
+
+
+<button type="button" class="btn btn-primary" data-toggle="modal" id="btn">
+    Launch demo modal
+</button>
+
+ @*Modal
+<div class="modal fade modal-second" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>*@
+@*<script>
+    debugger;
+    $('#btn').click(function () {
+        let helper = new datatablesHelper('exampleModal', 'http://google.com.vn', function (e) {
+            alert('aaaaa');
+        })
+        helper.showModal();
+        //alert('Button activated');
+    })
+</script>*@

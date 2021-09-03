@@ -5,9 +5,8 @@ using System.Collections.Generic;
 
 namespace CMS.Entity
 {
-    public partial class TextValue
+    public partial class TextValue : BaseEntity
     {
-        public Guid Id { get; set; }
         public Guid? VariableId { get; set; }
         public Guid? ItemId { get; set; }
         public string Value { get; set; }

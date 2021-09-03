@@ -12,6 +12,11 @@ namespace CMS.Infrastructure
         {
             _context = context;
         }
+        //public DbContext DbContext { 
+        //    get {
+        //        return _context;
+        //    }
+        //}
         public void Commit()
         {
             _context.SaveChanges();

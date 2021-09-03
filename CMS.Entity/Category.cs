@@ -5,24 +5,31 @@ using System.Collections.Generic;
 
 namespace CMS.Entity
 {
-    public partial class Category
+    public partial class Category: BaseEntity 
     {
         public Category()
         {
             Items = new HashSet<Item>();
-            ReferenceValues = new HashSet<ReferenceValue>();
+            ReferenceSources = new HashSet<ReferenceSource>();
+            Variables = new HashSet<Variable>();
+
+            Created = DateTime.Now.ToUniversalTime();
+            Modified = DateTime.Now.ToUniversalTime();
         }
 
-        public Guid Id { get; set; }
+        public string Title { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? Modified { get; set; }
-        public Guid? Author { get; set; }
-        public Guid? Editor { get; set; }
+        public Guid? AuthorId { get; set; }
+        public Guid? EditorId { get; set; }
         public bool? Active { get; set; }
+        public Guid? VariableSetId { get; set; }
 
-        public virtual AppUser AuthorNavigation { get; set; }
-        public virtual AppUser EditorNavigation { get; set; }
+        public virtual AppUser Author { get; set; }
+        public virtual AppUser Editor { get; set; }
+        public virtual VariableSet VariableSet { get; set; }
         public virtual ICollection<Item> Items { get; set; }
-        public virtual ICollection<ReferenceValue> ReferenceValues { get; set; }
+        public virtual ICollection<ReferenceSource> ReferenceSources { get; set; }
+        public virtual ICollection<Variable> Variables { get; set; }
     }
 }

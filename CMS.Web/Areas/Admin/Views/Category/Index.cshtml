@@ -1,0 +1,383 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <!--<div class="card-header">
+                    <h3 class="card-title">DataTable with default features</h3>
+                </div>-->
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="example1" class="table table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">
+                                    <div class="icheck-primary input-group" style="display:block;">
+                                        <input type="checkbox" id="example1_header" name="terms">
+                                        <label for="example1_header" />
+                                    </div>
+                                </th>
+                                <th>Id</th>
+                                <th>Title</th>
+                                <th>Created</th>
+                                <th>Modified</th>
+                                <th>Active</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+
+@Html.AntiForgeryToken()
+
+<!--<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Category</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" form="frm" class="btn btn-primary">Save</button>
+            </div>
+        </div>-->
+<!-- /.modal-content -->
+<!--</div>-->
+<!-- /.modal-dialog -->
+<!--</div>-->
+<!-- /.modal -->
+
+<button id="btn"> Test</button>
+<div id="modal"></div>
+
+<style>
+</style>
+@section Style{
+    <!-- DataTables -->
+    <link rel="stylesheet" href="/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link href="/admin/plugins/sweetalert2/sweetalert2.css" rel="stylesheet" />
+    <link href="~/admin/plugins/datatables-select/css/select.bootstrap4.css" rel="stylesheet" />
+
+    <link href="https://cdn.datatables.net/buttons/2.0.0/css/buttons.dataTables.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.2.0/css/searchBuilder.bootstrap4.min.css">
+
+    @*<link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/css/dataTables.checkboxes.css" rel="stylesheet" />*@
+    @*<style>
+            table td{
+                padding:.50rem !important;
+            }
+        </style>*@
+}
+
+@section Script
+{
+    @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
+    <p> ASPNETCORE_ENVIRONMENT = @hostingEnv.EnvironmentName</p>
+
+    @if (hostingEnv.EnvironmentName == "Development")
+    {
+        <!-- jQuery -->
+        <script src="/admin/plugins/jquery/jquery.min.js"></script>
+        <!-- Bootstrap 4 -->
+        <script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- DataTables  & Plugins -->
+        <script src="/admin//plugins/datatables/jquery.dataTables.js"></script>
+        <script src="/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+        <script src="/admin/plugins/datatables-responsive/js/dataTables.responsive.js"></script>
+        <script src="/admin/plugins/datatables-responsive/js/responsive.bootstrap4.js"></script>
+        <script src="/admin/plugins/datatables-buttons/js/dataTables.buttons.js"></script>
+        <script src="/admin/plugins/datatables-buttons/js/buttons.bootstrap4.js"></script>
+
+
+        <script src="/admin/plugins/datatables-select/js/dataTables.select.js"></script>
+        <script src="~/admin/plugins/datatables-checkboxes/dataTables.checkboxes.js"></script>
+
+        @*<script src="https://cdn.datatables.net/searchbuilder/1.2.0/js/dataTables.searchBuilder.min.js"></script>*@
+        <script src="~/admin/dist/js/searchBuilder.js"></script>
+        <script src="https://cdn.datatables.net/searchbuilder/1.2.0/js/searchBuilder.bootstrap4.min.js"></script>
+
+        <!-- SweetAlert2 -->
+        <script src="/admin/plugins/sweetalert2/sweetalert2.js"></script>
+        <!-- AdminLTE App -->
+        @*<script src="/admin/dist/js/adminlte.min.js"></script>*@
+
+    }
+    else
+    {
+        <!-- jQuery -->
+        <script src="/admin/plugins/jquery/jquery.min.js"></script>
+        <!-- Bootstrap 4 -->
+        <script src="/admin/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- DataTables  & Plugins -->
+        <script src="/admin//plugins/datatables/jquery.dataTables.min.js"></script>
+        <script src="/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script src="/admin/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="/admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+        <script src="/admin/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="/admin/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+
+
+        <script src="/admin/plugins/datatables-select/js/dataTables.select.min.js"></script>
+        <script src="~/admin/plugins/datatables-checkboxes/dataTables.checkboxes.js"></script>
+        @*<script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/js/dataTables.checkboxes.min.js"></script>*@
+
+        @*<script src="/admin/plugins/jszip/jszip.min.js"></script>
+            <script src="/admin/plugins/pdfmake/pdfmake.min.js"></script>
+            <script src="/admin/plugins/pdfmake/vfs_fonts.js"></script>
+            <script src="/admin/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+            <script src="/admin/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+            <script src="/admin/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>*@
+
+        <!-- SweetAlert2 -->
+        <script src="/admin/plugins/sweetalert2/sweetalert2.min.js"></script>
+        <!-- AdminLTE App -->
+        <script src="/admin/dist/js/adminlte.min.js"></script>
+        <!-- Page specific script -->
+    }
+    <!-- AdminLTE for demo purposes -->
+    <script src="/admin/dist/js/demo.js"></script>
+    <script src="~/admin/dist/js/custom.js"></script>
+    <!-- Page specific script -->
+    <script>
+        var $table;
+
+
+        function Edit(id, title) {
+            ajaxFormAction('modal', 'myModal', title, '/Admin/Category/Edit/' + id, false, function (e) {
+                $table.draw();
+            })
+        }
+        function Delete(ids, title) {
+            ajaxDelete(ids, title, '/Admin/Category/Delete', function (e) {
+                $table.draw();
+            })
+        }
+
+        $(document).ready(function () {
+            $count = 0;
+
+            // Add custom conditions to the office column type
+            $.fn.dataTable.ext.searchBuilder.conditions.office = {
+                "=": {
+                    // This function decides whether to include the criteria in the search
+                    isInputValid: function (el, that) {
+                         //If no options have been selected, or one has but it has no value then do not include the criteria
+                        if (
+                            $(el[0]).has('option:selected').length < 1 ||
+                            (
+                                $(el[0]).has('option:selected').length === 1 &&
+                                $($(el[0]).children('option:selected')[0]).text().length === 0
+                            )
+                        ) {
+                            return false;
+                        }
+
+                        return true;
+                    },
+                    // This is the string displayed in the condition select
+                    conditionName: 'Equals',
+                    // This function gathers/sets the values from the dom elements created in the init function that are to be used for searching
+                    inputValue: function (el) {
+                        let values = [];
+
+                        for (let element of el) {
+                            if ($(element).is('select')) {
+                                values.push($(element).children('option:selected').val());
+                            }
+                        }
+
+                        // return the selected values
+                        return values;
+                    },
+                    // This function initialises the criteria, specifically any dom elements that are required for its use
+                    init: function (that, fn, preDefined = null) {
+                        // As the select2 element is going to be populated with the values from the table,
+                        // we need the row indexes and the column index.
+                        let column = $(that.dom.data).children('option:selected').val();
+                        let indexArray = that.s.dt.rows().indexes().toArray();
+                        let settings = that.s.dt.settings()[0];
+                        let added = [];
+
+                        // Declare select2 element
+                        let el = $('<select class="js-example-placeholder-single js-states form-control" style="width: 300px"/>');
+                        $(el).prepend('<option></option>');
+
+                        // Set necessary listener to trigger search
+                        el.on('select2:select', function () { console.log("select"); fn(that, el); });
+
+                        // for each row
+                        for (let index of indexArray) {
+                            // Extract the relevant data
+                            let value = {
+                                filter: settings.oApi._fnGetCellData(settings, index, column, that.c.orthogonal.search),
+                                index,
+                                text: settings.oApi._fnGetCellData(settings, index, column, 'display')
+                            };
+
+                            // If we have not already added this value
+                            if (added.indexOf(value.filter) === -1) {
+                                // Create the option to add to the select 2 element 
+                                let opt = $('<option>', {
+                                    text: value.text,
+                                    value: value.filter
+                                })
+                                    .addClass(that.classes.option)
+                                    .addClass(that.classes.notItalic);
+
+                                $(el).append(opt);
+
+                                // Take note of the filter value so we do not add it again
+                                added.push(value.filter);
+
+                                // Check if it is preDefined and if so select it
+                                if (preDefined !== null && opt.val() === preDefined[0]) {
+                                    opt.attr('selected', true);
+                                }
+                            }
+                        }
+
+                        //// Trigger select2 on the select element when it is inserted into the dom
+                        //$(el).on('dtsb-inserted', function () {
+                        //    console.log("inserted")
+                        //    if ($(el).hasClass('select2-hidden-accessible')) {
+                        //        $(el).select2('destroy');
+                        //    }
+
+                        //    $(el).select2({ placeholder: 'Value' });
+
+                        //    if (preDefined !== null) {
+                        //        $(el).val(preDefined[0]);
+                        //        $(el).trigger('input');
+                        //    }
+                        //})
+
+                        return el;
+                    },
+                    // Straightforward search function comparing value from table and comparison from the select2 element
+                    // These values are retrieved in `inputValue`
+                    search: function (value, comparison) {
+                        return value === comparison[0];
+                    }
+                }
+            }
+
+            $table = new Table(
+                {
+                    table: {
+                        id: 'example1',
+                        urls: {
+                            load: '/Admin/Category/LoadData',
+                            create: '/Admin/Category/Create',
+                            delete: '/Admin/Category/Delete'
+                        },
+                        columns: [
+                            {
+                                "data": null,
+                                "orderable": false,
+                                "searchable": false,
+                                "className": "text-center",
+                                render: function (data, type, row, meta) {
+                                    let html = `<div class="icheck-primary input-group" style="display:block;">
+                                                    <input type="checkbox" id="example1_${meta.row}">
+                                                    <label for="example1_${meta.row}"></label>
+                                                </div>`;
+                                    return html;
+                                    //return new Date(data).toLocaleDateString("vi-VN");
+                                }
+                            },
+                            { "data": "id", "name": "Mã số", "autoWidth": true, "visible": false, "searchable": false },
+                            { "data": "title", "name": "Tên danh mục", "autoWidth": true},
+                            {
+                                "data": "created", "name": "Ngày tạo", "autoWidth": true,
+                                render: function (data, type, row, meta) {
+                                    return new Date(data).toLocaleDateString("vi-VN");
+                                }
+                            },
+                            {
+                                "data": "modified", "name": "Ngày chỉnh sữa", "autoWidth": true,
+                                render: function (data, type, row, meta) {
+                                    return new Date(data).toLocaleDateString("vi-VN");
+                                }
+                            },
+                            {
+                                "data": "active",
+                                "name": "Hoạt động",
+                                "autoWidth": true,
+                                "className": "text-center",
+                                "width": "10%",
+                                render: function (data, type, row, meta) {
+                                    let html = `<div class="icheck-primary input-group" style="display:block;">
+                                                                                                <input disabled type="checkbox" ${data ? 'checked' : ''} id="example1_active_${meta.row}" name="terms">
+                                                                                                <label for="example1_active_${meta.row}"></label>
+                                                                                            </div>`;
+                                    return html;
+                                    //return new Date(data).toLocaleDateString("vi-VN");
+                                }
+                            },
+                            {
+                                "orderable": false,
+                                "width": "15%",
+                                "className": "text-center",
+                                "data": null,
+                                "render": function (data, type, row, meta) {
+                                    return `<a class="btn btn-info btn-sm" onclick="Edit('${row.id}',  '${row.title}');" href="#">Edit</a> <a href="#" class="btn btn-danger btn-sm" onclick="Delete('${row.id}', '${row.title}');" >Delete</a>`;
+                                    //return '<button class="btn btn-primary">Edit</button> <button class="btn btn-danger">Delete</button>';
+                                }
+                            }
+                        ]
+                    },
+                    modal: {
+                        id: 'myModal',
+                        selector: 'modal'
+                    }
+                }
+            )
+
+
+          
+
+
+            
+
+
+
+
+            $('#btn').on('click', function () {
+                debugger;
+
+                $table.column(2).search('abcd').column(3).search('1111').draw()
+
+                //$table.column(2).search('abcd').draw();
+
+                //$table.searchBuilder.getDetails();
+                //$table.column(2).search()
+
+            })
+        });
+    </script>
+}
+

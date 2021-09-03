@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace CMS.ApplicationCore
 {
@@ -15,11 +18,13 @@ namespace CMS.ApplicationCore
             service.AddHttpContextAccessor();
             service.AddDbContext<CMSContext>(options =>
             {
-                options.UseSqlServer("Server=.;Database=CMS;uid=sa;pwd=Admin@123");
+                options.UseSqlServer("Server=.;Database=Test;uid=sa;pwd=Admin@123");
             });
-            service.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             service.AddScoped<IUnitOfWork, UnitOfWork>();
+            service.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            
             service.AddScoped<IAuthService, AuthService>();
+
 
             service.AddIdentity<AppUser, AppRole>(options =>
             {

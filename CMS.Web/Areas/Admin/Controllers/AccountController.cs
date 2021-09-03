@@ -34,7 +34,7 @@ namespace CMS.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task< IActionResult> Login(LoginRequest request)
         {
-            var result = await _authService.Login(request);
+            var result = await _authService.LoginAsync(request);
             if (result)
             {
                 return Redirect(request.ReturnUrl);
@@ -44,7 +44,7 @@ namespace CMS.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            await _authService.Logout();
+            await _authService.LogoutAsync();
             var message = GetMessage("200", "You are loged out");
             return View("StatusMessage", message);
         }
@@ -57,7 +57,7 @@ namespace CMS.Web.Areas.Admin.Controllers
         public async Task<ActionResult> Register([FromForm] RegisterRequest request)
         {
             _authService.ConfirmUrl = Url.Action(nameof(ConfirmEmail), "Account");
-            await _authService.CreateUser(request);
+            await _authService.CreateUserAsync(request);
 
             var message = GetMessage("200", $"The active link was sent to your email. Please check email to complete registration");            
             return View("StatusMessage", message);
@@ -73,7 +73,7 @@ namespace CMS.Web.Areas.Admin.Controllers
         {
             StatusMessageViewModel message = null;
 
-            var status = await _authService.ConfirmEmail(userId, token);
+            var status = await _authService.ConfirmEmailAsync(userId, token);
             if (status)
             {
                 message = GetMessage("200", $"Your account is actived successfully. Click <a href='/Account/Login/'> here </a> to login");
@@ -89,7 +89,7 @@ namespace CMS.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<ActionResult> ForgotPassword([FromForm]string email)
         {
-            var user = await _authService.GetUserByUserEmail(email);
+            var user = await _authService.GetUserByEmailAsync(email);
             string token = await _authService.GeneratePasswordResetTokenAsync(user);
 
             string activeUrl = Url.Action(nameof(ResetPassword), "account", new { userId = user.Id, token }, Request.Scheme, Request.Host.ToString());
@@ -107,7 +107,7 @@ namespace CMS.Web.Areas.Admin.Controllers
         }
         public async Task<IActionResult> ResetPassword(string userId, string token)
         {
-            var user = await _authService.GetUserByUserId(userId);
+            var user = await _authService.GetUserByIdAsync(userId);
             ResetPasswordRequest model = new ResetPasswordRequest
             {
                 Token = token,
@@ -178,7 +178,7 @@ namespace CMS.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<bool> CheckUserExist([FromQuery] string email)
         {
-            var valid = await _authService.CheckExistEmail(email);
+            var valid = await _authService.CheckExistEmailAsync(email);
             return !valid;
         }
         #endregion

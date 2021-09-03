@@ -1,0 +1,27 @@
+﻿@model CMS.Entity.Category
+
+
+@Html.AntiForgeryToken()
+<form id="editFrm" method="post" action="/Admin/Category/Edit" @*onsubmit="return ajaxSubmit(this, 'editModal')*@">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <div class="form-group">
+        <label for="exampleInputEmail1">Email address</label>
+        <input type="text" class="form-control" name="Title" placeholder="Title" value="@Model.Title">
+    </div>
+    <div class="form-group">
+        <label class="form-group" for="exampleInputEmail1">Email address</label>
+        <div class="input-group">
+            <select class="form-control">
+                <option>aaaaaaaaaaaaaa</option>
+                <option>aaaaaaaaaaaaaa</option>
+                <option>aaaaaaaaaaaaaa</option>
+                <option>aaaaaaaaaaaaaa</option>
+            </select>
+            <span class="input-group-append">
+                <button type="button" class="btn btn-default btn-flat">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                </button>
+            </span>
+        </div>
+    </div>
+</form>

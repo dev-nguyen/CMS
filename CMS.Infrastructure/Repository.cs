@@ -39,14 +39,27 @@ namespace CMS.Infrastructure
             return _dbSet.AsQueryable();
         }
 
-        public IQueryable<T> GetItems(Expression<Func<T, bool>> condition)
+        public IQueryable<T> GetItems(int currentPage, int pageSize, Expression<Func<T, bool>> condition = null)
         {
-            return _dbSet.Where(condition);
+            IQueryable<T> query = _dbSet;
+            if (condition != null)
+                query.Where(condition);
+            return query.Skip(currentPage).Take(pageSize);
         }
 
-        public void RemoveItem(T entity)
+        public int Count(Expression<Func<T, bool>> condition = null)
+        {
+            IQueryable<T> query = _dbSet;
+            if (condition != null)
+                query.Where(condition);
+
+            return query.Count();
+        }
+
+        public T RemoveItem(T entity)
         {
             _dbSet.Remove(entity);
+            return entity;
         }
 
         public void RemoveItems(IEnumerable<T> entities)
@@ -56,6 +69,8 @@ namespace CMS.Infrastructure
 
         public void UpdateItem(T entity)
         {
+            //DbContext.Attach(entity);
+            //DbContext.Entry(entity).State = EntityState.Modified;
             _dbSet.Update(entity);
         }
 

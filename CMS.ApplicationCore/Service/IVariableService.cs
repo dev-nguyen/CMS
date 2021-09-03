@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CMS.ApplicationCore.Service
 {
-    interface IVariableService
+    class IVariableService
     {
     }
 }
