@@ -117,7 +117,8 @@
         <script src="~/admin/plugins/datatables-checkboxes/dataTables.checkboxes.js"></script>
 
         @*<script src="https://cdn.datatables.net/searchbuilder/1.2.0/js/dataTables.searchBuilder.min.js"></script>*@
-        <script src="~/admin/dist/js/searchBuilder.js"></script>
+        @*<script src="~/admin/dist/js/searchBuilder.js"></script>*@
+        <script src="~/admin/plugins/datatables-searchBuilder/searchBuilder.min.js"></script>
         <script src="https://cdn.datatables.net/searchbuilder/1.2.0/js/searchBuilder.bootstrap4.min.js"></script>
 
         <!-- SweetAlert2 -->
@@ -306,19 +307,35 @@
                                                     <label for="example1_${meta.row}"></label>
                                                 </div>`;
                                     return html;
-                                    //return new Date(data).toLocaleDateString("vi-VN");
-                                }
+                                },
+                                searchBuilderType: 'html'
                             },
-                            { "data": "id", "name": "Mã số", "autoWidth": true, "visible": false, "searchable": false },
-                            { "data": "title", "name": "Tên danh mục", "autoWidth": true},
                             {
-                                "data": "created", "name": "Ngày tạo", "autoWidth": true,
+                                "data": "id",
+                                "name": "Mã số",
+                                "autoWidth": true,
+                                "visible": false,
+                                "searchable": false
+                            },
+                            {
+                                "data": "title",
+                                "name": "Tên danh mục",
+                                "autoWidth": true,
+                                //type: 'office'
+                                searchBuilderType: 'string'
+                            },
+                            {
+                                "data": "created",
+                                "name": "Ngày tạo",
+                                "autoWidth": true,
                                 render: function (data, type, row, meta) {
                                     return new Date(data).toLocaleDateString("vi-VN");
                                 }
                             },
                             {
-                                "data": "modified", "name": "Ngày chỉnh sữa", "autoWidth": true,
+                                "data": "modified",
+                                "name": "Ngày chỉnh sữa",
+                                "autoWidth": true,
                                 render: function (data, type, row, meta) {
                                     return new Date(data).toLocaleDateString("vi-VN");
                                 }
@@ -331,11 +348,10 @@
                                 "width": "10%",
                                 render: function (data, type, row, meta) {
                                     let html = `<div class="icheck-primary input-group" style="display:block;">
-                                                                                                <input disabled type="checkbox" ${data ? 'checked' : ''} id="example1_active_${meta.row}" name="terms">
-                                                                                                <label for="example1_active_${meta.row}"></label>
-                                                                                            </div>`;
+                                                    <input disabled type="checkbox" ${data ? 'checked' : ''} id="example1_active_${meta.row}" name="terms">
+                                                    <label for="example1_active_${meta.row}"></label>
+                                                </div>`;
                                     return html;
-                                    //return new Date(data).toLocaleDateString("vi-VN");
                                 }
                             },
                             {
@@ -377,6 +393,10 @@
                 //$table.column(2).search()
 
             })
+
+            $('.dtsb-searchBuilder').on('hide.bs.modal', function () {
+                alert('close');
+            });
         });
     </script>
 }

@@ -250,14 +250,20 @@ var Table = (function (o) {
         let $table = $(`#${_options.table.id}`).DataTable({
             dom: 'Blfrtip',
             //searchBuilder: true,
-            columnDefs: [{ type: "office", targets: 2 }],
-            //search: {
-            //    return: true
-            //},
-            searchBuilder: {
-                columns: [2, 3],
-                enterSearch: true
+            //columnDefs: [{ type: "office", targets: 2 }],
+            search: {
+                return: true
             },
+            //columnDefs: [
+            //    {
+            //        "targets": -1,
+            //        "data": null
+            //    }
+            //],
+            //searchBuilder: {
+            //    columns: [2]
+            //    //enterSearch: true
+            //},
             "processing": true, // for show progress bar
             "serverSide": true,
             "filter": true,

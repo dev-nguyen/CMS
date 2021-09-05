@@ -710,6 +710,8 @@
                         }
                         if (!found) {
                             var col = _this.s.dt.settings()[0].aoColumns[index];
+                            if (col.data == null)//nguyen
+                                return;
                             var opt = {
                                 index: index,
                                 origData: col.data,
@@ -1036,11 +1038,13 @@
                 .addClass(Criteria.classes.value)
                 .addClass(Criteria.classes.input)
                 .on('input keypress', that._throttle(function (e) {
+                    that.s.value = that.s.conditions[that.s.condition].inputValue(that.dom.value, that);//Nguyen
                     var code = e.keyCode || e.which;
                     if (!that.c.enterSearch &&
                         !(that.s.dt.settings()[0].oInit.search !== undefined &&
                             that.s.dt.settings()[0].oInit.search["return"]) ||
                         code === 13) {
+                        //return that.s.dt.draw();
                         return fn(that, this);
                     }
                 }, searchDelay === null ? 100 : searchDelay));
