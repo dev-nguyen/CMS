@@ -5,6 +5,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\css\brands.css" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\css\fontawesome.css" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\css\regular.css" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\css\solid.css" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.eot" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.ttf" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.woff" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.eot" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.ttf" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.woff" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.eot" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.ttf" />
+    <Content Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.woff" />
+    <Content Include="wwwroot\admin\node_modules\bootstrap-table\dist\bootstrap-table.css" />
+    <Content Include="wwwroot\admin\node_modules\bootstrap\dist\css\bootstrap-reboot.css" />
+    <Content Include="wwwroot\admin\node_modules\bootstrap\dist\css\bootstrap.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
   </ItemGroup>
 
@@ -13,7 +32,36 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.svg" />
+    <None Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-brands-400.woff2" />
+    <None Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.svg" />
+    <None Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-regular-400.woff2" />
+    <None Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.svg" />
+    <None Include="wwwroot\admin\node_modules\%40fortawesome\fontawesome-free\webfonts\fa-solid-900.woff2" />
+    <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\bootstrap-table.min.js" />
+    <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\extensions\export\bootstrap-table-export.js" />
+    <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\extensions\mobile\bootstrap-table-mobile.js" />
+    <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\extensions\print\bootstrap-table-print.js" />
+    <None Include="wwwroot\admin\node_modules\bootstrap\dist\js\bootstrap.js" />
+    <None Include="wwwroot\admin\node_modules\jquery\dist\jquery.js" />
+    <None Include="wwwroot\admin\node_modules\popper.js\dist\umd\popper.js" />
+    <None Include="wwwroot\admin\node_modules\tableexport.jquery.plugin\tableExport.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CMS.Infrastructure\CMS.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\admin\dist\js\ace - Copy.js.map">
+      <DependentUpon>ace.js.map</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\admin\dist\js\ace - Copy.min.js">
+      <DependentUpon>ace.min.js</DependentUpon>
+    </Content>
+    <Content Update="wwwroot\admin\dist\js\ace - Copy.min.js.map">
+      <DependentUpon>ace.min.js.map</DependentUpon>
+    </Content>
   </ItemGroup>
 
 </Project>

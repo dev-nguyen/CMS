@@ -133,30 +133,35 @@ namespace CMS.Web.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult LoadData()
+        public IActionResult LoadData(int offset, int limit, string search, string sort, string order)
         {
-            var draw = int.Parse(HttpContext.Request.Form["draw"].FirstOrDefault());
-            // Skiping number of Rows count  
-            var start = Request.Form["start"].FirstOrDefault();
-            // Paging Length 10,20  
-            var length = Request.Form["length"].FirstOrDefault();
-            // Sort Column Name  
-            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-            // Sort Column Direction ( asc ,desc)  
-            var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-            // Search Value from (Search box)  
-            var searchValue = Request.Form["search[value]"].FirstOrDefault();
-
-            //Paging Size (10,20,50,100)  
-            int pageSize = length != null ? Convert.ToInt32(length) : 0;
-            int skip = start != null ? Convert.ToInt32(start) : 0;
-            int recordsTotal = _categoryService.Count();
-
-            var data = _categoryService.GetCategories(skip, pageSize);
-
-            return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+            var result = _categoryService.GetCategories(offset, limit);
+            int total = _categoryService.Count();
+            return Json(new { total = total, totalNotFiltered = total, rows = result });
         }
 
         
+    }
+
+
+
+
+    public class Filter
+    {
+        public List<LogicBlock> Filters { get; set; }
+    }
+
+    public class LogicBlock
+    {
+        public List<FilterBlock> FilterBlock { get; set; }
+        public string Logic { get; set; }
+    }
+    public class FilterBlock
+    {
+        public string Opand { get; set; }
+        public string Column { get; set; }
+        public string ColumnType { get; set; }
+        public string Value { get; set; }
+
     }
 }
