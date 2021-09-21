@@ -1,4 +1,15 @@
 
+var swal = Swal.mixin({
+    //buttonsStyling: false
+    showConfirmButton:false
+});
+function formatDateTime(locale, value) {
+    let dateTimeValue = new Date(value);
+    let timeZone = dateTimeValue.getTimezoneOffset() * 60 * 1000;
+    let localTimezone = dateTimeValue.getTime() - timeZone;
+    return new Date(localTimezone).toLocaleDateString(locale) + " " + new Date(localTimezone).toLocaleTimeString(locale, { hour12: true });
+
+}
 const Constant = {
     operators: {
         string: {
@@ -36,28 +47,57 @@ const Constant = {
             1: 'True'
         },
         logic: {
-            1: 'And',
-            2: 'Or'
+            'and': 'And',
+            'or': 'Or'
         }
     }
 }
 
-
-
 //create Modal when clicking filter button for user can create filter item on table
 var FilterModal = (function () {
-    var _id, _columns;
-    //function FilterModal(id, columns) {
-    //}
+    function _createModal(id, columns, selector, $table) {
+        this._controlName = {
+            c: 'column',
+            o: 'operator',
+            v: 'value',
+            l: 'logic',
+            n: 'new',
+            r: 'remove'
+        };        
 
-    function _createModal(id, columns) {
-        _id = id;
-        _columns = columns;
-        var html = `<div class="modal modal-xl fade" id="${id}-FilterModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        this._id = id;
+        this._columns = columns;
+        this._table = $table;
+        this._modalSelector = selector;
+
+        //filter control
+        this.modalId = `${this._id}-filter-modal`;
+        this.body = '';
+        this.saveId = `${this._id}-filter-save`;
+
+        this._defaultText = {
+            c: 'Please select column',
+            o: 'Please select operator',
+        }
+
+        this.cookieFilterKey = `${this._id}-filter`;
+
+        _createTemplate();
+        $(`#${this.modalId}`).modal('show');
+    }
+    function _getSource(path, sourceKey) {
+        return eval(path)[sourceKey];
+    }
+    function _createControlId(controlName, index) {
+
+        return `${this._id}-filter-${this._controlName[controlName]}-${index}`;
+    }
+    function _createTemplate() {
+        var html = `<div class="modal modal-xl fade" id="${this.modalId}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title text-primary-d3" id="exampleModalLabel">
+                            <h5 class="modal-title text-primary-d3">
                               Modal title
                             </h5>
 
@@ -74,144 +114,338 @@ var FilterModal = (function () {
                               Close
                             </button>
 
-                            <button type="button" class="btn btn-primary">
+                            <button type="button" id="${this.saveId}" class="btn btn-primary">
                               Save changes
                             </button>
                           </div>
                         </div>
                       </div>
                     </div>`;
-        $(`#modal`).empty();
-        $(`#modal`).append(html);
-        //_createBody();
-        _createFilterBlock(0);
-        $(`#${_id}-FilterModal`).modal('show');
-    }
-    function _createBody() {
-        var $body = $(`#${_id}-FilterModal .modal-body`);
-        var index = $body.children().children().length;
-        $(`#${_id}-FilterModal .modal-body`).append(_createFilterBlock(index));
+        $(`#${this._modalSelector}`).empty();
+        $(`#${this._modalSelector}`).append(html);
+        this.body = $(`#${this.modalId} .modal-body`);
 
+
+        let filters = _getFilterRestore();
+        (filters) ? _restoreFilterBlock(filters) : _createFilterBlock(0);
+
+        $(`#${this.saveId}`).on('click', function () {
+            _saveFilter();
+        });
+    }
+    function _restoreFilterBlock(filters) {
+        for (let i = 0; i < filters.length; i++)
+        {
+            let filterObj = filters[i];
+            _createFilterBlock(i, filterObj);
+        }
         
     }
-    function _setListener(index) {
-        var column = `#${_id}-filter-column-${index}`;
-        var operator = `#${_id}-filter-operator-${index}`;
-        var value = `#${_id}-filter-value-${index}`;
-        var logic = `#${_id}-filter-logic-${index}`;
-        var newBtn = `#${_id}-filter-new-${index}`;
-        var removeBtn = `#${_id}-filter-remove-${index}`;
+    function _getFilterRestore() {
+        let value = sessionStorage.getItem(this.cookieFilterKey);
+        if (value)
+            value = JSON.parse(value);
 
-        $(column).on('change', function () {
-            var val = $(this).val();
-            var type = val.split('_')[1];
-            var colName = val.split('_')[0];
-            var operators = Constant.operators[type];
+        return value;
+    }
+    function _populateDropdownList(control, source, defaultValue) {
+        control.empty();
+        if (defaultValue)
+            control.append(`<option>${defaultValue}</option>`);
+        if (source == null)
+            return;
+        //columns source
+        if (Array.isArray(source)) {
+            for (let i = 0; i < source.length; i++) {
+                let col = this._columns[i];
+                let type = col.type;
+                let field = col.field;
+                let title = col.title;
+                if (field != 'state' && field != 'tools')
+                    control.append(`<option value="${field}_${type}">${title}</option>`);
+            }
+        }
+        else {
+            for (let p in source) {
+                let val = p;
+                let text = source[p];
+                control.append(`<option value="${val}">${text}</options>`);
+            }
+        }
+    }
+    function _createFilterColumnControl($formRow, index, filterObj) {
+        let id = _createControlId('c', index);
+        let $col = $(`<div class="col-md-3">`);
+        let $select = $(`<select class="form-control" id="${id}">`);
+        _populateDropdownList($select, this._columns, this._defaultText.c);
+        $col.append($select);
+        $($formRow).append($col);
 
-            $(operator).find('option').not(':first').remove();
-            if (type == 'boolean') {
-                let $select = $(`<select id="${_id}-filter-value-${index}" class="form-control">`);
-                for (let p in Constant.values.boolean) {
-                    $select.append(`<option value="${p}">${Constant.values.boolean[p]}</option>`);                    
-                }
-                $(value).replaceWith($select);
+        //set selected column,
+        if (filterObj) {
+            $val = filterObj.field + '_' + filterObj.type;
+            $select.val($val);
+        }
+    }
+    function _createFilterOperatorControl($formRow, index, filterObj) {
+        let id = _createControlId('o', index);
+        let $col = $(`<div class="col-md-3">`);
+        let $select = $(`<select class="form-control" id="${id}">`);
+        _populateDropdownList($select, null, this._defaultText.o);
+        $col.append($select);
+        $($formRow).append($col);
+
+        //set selected column,
+        if (filterObj) {
+            //get column control
+            let $columnFilterControl = $(`#${_createControlId('c', index)}`);
+            let columnSelectedValueType = $columnFilterControl.val().split('_')[1];
+            let operatorSelectedValue = filterObj.operand;
+
+             _populateDropdownList($select, _getSource('Constant.operators', columnSelectedValueType));
+            $select.val(operatorSelectedValue);
+        }
+    }
+    function _createFilterValueControl($fromRow, index, filterObj) {
+        let id = _createControlId('v', index);
+        let $col = $(`<div class="col-md-3">`);
+        let $input = $(`<input class="form-control" id=${id} type="text">`);
+
+        if (filterObj) {
+            //restore
+            //get column control
+            let $columnFilterControl = $(`#${_createControlId('c', index)}`);
+            let columnSelectedValueType = $columnFilterControl.val().split('_')[1];
+            if (columnSelectedValueType == 'boolean') {
+                $select = $(`<select class="form-control" id="${id}">`);
+                _populateDropdownList($select, _getSource('Constant.values', 'boolean'))
+                $select.val(filterObj.value);
+                $input = $select;
             }
             else {
-                let replace = $(`<input type="text" id="${_id}-filter-value-${index}" class="form-control">`);
-                $(value).replaceWith(replace);
+                $input.val(filterObj.value);
             }
-            for (let p in operators) {
-                $(operator).append(`<option value="${p}">${operators[p]}</option>`)
-            }
-        });
-
-        $(operator).on('change', function () {
-            var val = $(this).val();
-            if (val == 'isNull' || val == 'isNotNull') {
-                $(value).closest('div').css('display', 'none');
-            }
-            else {
-                $(value).closest('div').css('display', 'block');
-            }
-        })
-
-        $(newBtn).on('click', function () {
-            let idx = $(`#${_id}-FilterModal .modal-body`).children().length;
-            $(`#${_id}-FilterModal .modal-body`).append(_createFilterBlock(idx));
-        })
-        $(removeBtn).on('click', function () {
-            //$(`#${_id}-FilterModal .modal-body`).append(_createFilterBlock(index + 1));
-            $(this).closest('div .form-row').remove();
-        })
-    }
-    function _createFilterBlock(index) {
-        var styleCss = index > 0 ? 'style="margin-top:1rem";' : ''
-        var $row = $(`<div class="form-row" ${styleCss}">`);
-
-        var $columnFilter = $(_createColumnFilter(index));
-        var $operatorFilter = $(_createOperatorFilter(index));
-        var $valueFilter = $(_createValueFilter(index));
-        var $logicFilter = $(_createLogicFilter(index));
-        var $actionFilter = $(_createActionFilter(index));
-
-        $row.append($columnFilter);
-        $row.append($operatorFilter);
-        $row.append($valueFilter);
-        $row.append($logicFilter);
-        $row.append($actionFilter);
-
-        var $body = $(`#${_id}-FilterModal .modal-body`);
-        //var index = $body.children().length;
-        $(`#${_id}-FilterModal .modal-body`).append($row);
-        _setListener(index);
-        //return $row;
-    }
-    function _createColumnFilter(index) {
-
-        $select = $(`<select class="form-control" id="${_id}-filter-column-${index}"><option>Please select column</option></select>`);
-        for (let i = 0; i < _columns.length; i++) {
-            let col = _columns[i];
-            let type = col.type;
-            let field = col.field;
-            let title = col.title;
-            if (field != 'state' && field != 'tools')
-                $select.append(`<option value="${field}_${type}">${title}</option>`);
         }
-        return $(`<div class="col-md-3">`).append($select);
+        $col.append($input);
+        $fromRow.append($col);
     }
-    function _createOperatorFilter(index) {
-        $select = $(`<select class="form-control" id="${_id}-filter-operator-${index}"><option>Please select operator</option></select>`);
-        return $(`<div class="col-md-3">`).append($select);
-        //return $select;
-    }
-    function _createValueFilter(index) {
-        $input = $(`<input class="form-control" id="${_id}-filter-value-${index}" type="text" placeholder="Please type value">`);
-        return $(`<div class="col-md-3">`).append($input);
-        //return $input
-    }
-    function _createLogicFilter(index) {
-        $select = $(`<select class="form-control" id="${_id}-filter-logic-${index}"></select>`);
-        for (let p in Constant.values.logic) {
-            $select.append(`<option value="${p}">${Constant.values.logic[p]}</option>`)
-        }
+    function _createLogicControl($formRow, index, filterObj) {
+        let id = _createControlId('l', index);
+        let $col = $(`<div class="col-md-2">`);
+        let $select = $(`<select class="form-control" id="${id}">`);
 
-        return $(`<div class="col-md-2">`).append($select);
-        //return $select;
+        let source = _getSource('Constant.values', 'logic');
+        _populateDropdownList($select, source);
+        if (filterObj) {
+            $select.val(filterObj.logic);
+        }
+        $col.append($select);
+        $formRow.append($col);
     }
-    function _createActionFilter(index) {
-        $newBtn = $(`<button id="${_id}-filter-new-${index}" class="btn btn-default" style="border-radius:50%; margin-right:3px;"><i class="fa fa-plus"></i></button>`);
-        $removeBtn = $(`<button id="${_id}-filter-remove-${index}" class="btn btn-danger" style="border-radius:50%"><i class="fa fa-times"></i></button>`);
+    function _createActionButtonControl($formRow, index) {
+        let btnNewId = _createControlId('n', index);
+        let btnRemoveId = _createControlId('r', index);
         $col = $(`<div class="col-md-1">`);
+
+        $newBtn = $(`<button id="${btnNewId}" class="btn btn-default" style="border-radius: 50%; margin-right: 3px; "><i class="fa fa-plus"></i></button>`);
+        $removeBtn = $(`<button id="${btnRemoveId}" class="btn btn-danger" style="border-radius:50%"><i class="fa fa-times"></i></button>`);
         $col.append($newBtn);
         if (index > 0)
             $col.append($removeBtn);
 
-        return $col;
+        $formRow.append($col);
+    }
+
+    function _createFilterBlock(index, filterObj) {
+        var styleCss = index > 0 ? 'style="margin-top:1rem";' : ''
+        var $row = $(`<div class="form-row" ${styleCss}">`);
+        this.body.append($row);
+
+        _createFilterColumnControl($row, index, filterObj);
+        _createFilterOperatorControl($row, index, filterObj);
+        _createFilterValueControl($row, index, filterObj);
+        _createLogicControl($row, index, filterObj);
+        _createActionButtonControl($row, index, filterObj);
+
+        _setListener(index);
+    }
+
+    function _setListener(index) {
+        let columnFilterControlId = _createControlId('c', index);
+        let operatorFilterControlId = _createControlId('o', index);
+        let valueFilterControlId = _createControlId('v', index);
+        let buttonNewFilterControlId = _createControlId('n', index);
+        let buttonRemoveFilterControlId = _createControlId('r', index);
+
+        let defaultText = this._defaultText;
+
+
+        $(`#${columnFilterControlId}`).off('change');
+        $(`#${columnFilterControlId}`).on('change', function () {
+            let columnValue = $(this).val();
+            let type = columnValue.split('_')[1];
+            let $valueFilterControl = $(`#${valueFilterControlId}`);
+            let $operatorFilterControl = $(`#${operatorFilterControlId}`);
+
+            _populateDropdownList($operatorFilterControl, _getSource('Constant.operators', type), defaultText.o);
+
+            if (type == 'boolean') {
+                let $select = $(`<select class="form-control" id="${valueFilterControlId}">`);
+                _populateDropdownList($select, _getSource('Constant.values', 'boolean'));
+                $valueFilterControl.replaceWith($select);
+            }
+            else {
+                let $input = $(`<input type="text" class="form-control" id="${valueFilterControlId}">`);
+                $valueFilterControl.replaceWith($input);
+            }
+        });
+
+        $(`#${operatorFilterControlId}`).off('change');
+        $(`#${operatorFilterControlId}`).on('change', function () {
+            let value = $(this).val();
+            let display = 'block'
+            if (value == 'isNull' || value == 'isNotNull') {
+                display = 'none';
+            }
+            $(`#${valueFilterControlId}`).parent().css('display', `${display}`);
+        });
+
+        $(`#${buttonNewFilterControlId}`).off('click');
+        $(`#${buttonNewFilterControlId}`).on('click', function () {
+
+            _createFilterBlock((index + 1));
+        });
+
+        $(`#${buttonRemoveFilterControlId}`).off('click');
+        $(`#${buttonRemoveFilterControlId}`).on('click', function () {
+
+            $(`#${buttonRemoveFilterControlId}`).closest('.form-row').remove();
+        });
+    }
+
+    function _saveFilter() {
+        let result = [];
+        let count = this.body.children().length;
+        for (let i = 0; i < count; i++) {
+            let $columnControlId = $(`#${_createControlId('c', i)}`);
+            let $operatorControlId = $(`#${_createControlId('o', i)}`);
+            let $valueControlId = $(`#${_createControlId('v', i)}`);
+            let $logicControlId = $(`#${_createControlId('l', i)}`);
+
+            if ($columnControlId.val() && $operatorControlId.val()) {
+                result.push({
+                    field: $columnControlId.val().split('_')[0],
+                    type: $columnControlId.val().split('_')[1],
+                    operand: $operatorControlId.val(),
+                    value: $valueControlId.val(),
+                    logic: $logicControlId.val()
+                });
+            }        
+        }
+        if (result.length > 0)
+            sessionStorage.setItem(this.cookieFilterKey, JSON.stringify(result));
+
+        $(`#${this.modalId}`).modal('hide');
+        $(this._table).bootstrapTable('refresh');
     }
 
     return {
-        CreateModalFilter: function (id, columns) {
-            _createModal(id, columns)
+        createModalFilter: function (id, columns, selector, $table) {
+            _createModal(id, columns, selector, $table);
+        }
+    }
+})();
+
+var ModalHelper = (function () {
+    function _createModal(id, selector, url, title, callback) {
+        this._url = url;
+        this._id = id,//$table.attr('id');
+        this._selector = selector;
+        //this._$table = $table;
+        this._title = title;
+        this._callback = callback;
+
+        this._modalId = `${this._id}-form-modal`;
+        this._saveId = `${this._id}-form-save`;
+
+        createTemplate();
+        registerEvents(this);
+        loadContent(this._url);
+    }
+    function createTemplate() {
+        var html = `<div class="modal modal-xl fade" id="${this._modalId}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title text-primary-d3">
+                              ${this._title}
+                            </h5>
+
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+
+                          <div class="modal-body">
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary px-4" data-dismiss="modal">
+                              Close
+                            </button>
+
+                            <button type="submit" id="${this._saveId}" class="btn btn-primary">
+                              Save changes
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>`;
+        $(`#${this._selector}`).empty();
+        $(`#${this._selector}`).append(html);        
+    }
+    function loadContent(url) {
+        $(`#${this._modalId} .modal-title`).find('h5').html(this._title);
+        $(`#${this._modalId} .modal-body`).load(url, function () {
+            let modal = $(this).closest('div.modal-xl').modal('show');
+           
+        });
+        //$(`#${this._modalId}`).modal('show');
+    }
+
+    function registerEvents(that) {
+        let $table = that._$table;
+        let $btnSave = $(`#${that._saveId}`);
+        let modalId = that._modalId
+        let callback = that._callback;
+
+        $(`#${this._modalId}`).on('show.bs.modal', function () {
+            let $form = $(this).find('form');
+            let formId = $form.attr('id');
+            let isNew = $form.attr('isNew');
+            $btnSave.attr('form', formId);
+
+            //$(`#${this} .modal-footer`).find('button[type=submit]').attr('form', formId);
+            $form.submit(function () {
+                return ajaxSubmit(this, modalId, isNew);
+            })
+        })
+
+        $(`#${this._modalId}`).on('hide.bs.modal', function () {
+
+            //if ajax call success: it will set data-isSubmit = true in modal attribute
+            let isSubmit = $(this).data('isSubmit');
+            if (isSubmit) {
+                //self._closeCallback(this);
+                //$table.bootstrapTable('refresh');
+                callback();
+                $(this).removeData('isSubmit');
+            }
+        });
+    }
+    return {
+        createModal: function (tableId, selector, url, title, callback) {
+            _createModal(tableId, selector, url, title, callback)
         }
     }
 })();
@@ -230,9 +464,9 @@ var FilterModal = (function () {
 } 
  */
 
-var DataGrid = (function (filter) {
-    var _filter = filter;
-    let _options = {
+function DataTable(options) {
+    this._defaultOptions = {
+        url: options.urls.load,
         icons: {
             columns: 'fa-th-list text-orange-d1',
             detailOpen: 'fa-plus text-blue',
@@ -241,10 +475,15 @@ var DataGrid = (function (filter) {
             print: 'fa-print text-purple-d1',
             fullscreen: 'fa fa-expand',
 
+            sort: 'fas fa-sort',
+            plus: 'fas fa-plus',
+            minus: 'fas fa-minus',
+
             search: 'fa-search text-blue'
         },
         serverSort: true,
         sortable: true,
+
         sidePagination: 'server',
         pagination: 'true',
         //toolbar: "#table-toolbar",
@@ -252,8 +491,9 @@ var DataGrid = (function (filter) {
         //clickToSelect: true,
         pageSize: 10,
         checkboxHeader: true,
-        search: true,
+        search: false,
         searchAlign: "left",
+        smartDisplay: false,
         //showSearchButton: true,
 
         sortable: true,
@@ -281,8 +521,12 @@ var DataGrid = (function (filter) {
                     icon: 'fa-filter',
                     event: function () {
                         //alert('Do some stuff to e.g. search all users which has logged in the last week')
-                        //$('#exampleModal').modal('show');
-                        _filter.CreateModalFilter(_options.id, _options.columns);
+                        let tableId = this.options.id;
+                        let cols = this.options.columns[0];
+                        let modalSelector = this.options.modalSelector;
+                        FilterModal.createModalFilter(tableId, cols, modalSelector, this.$el);
+
+                        //FilterModal.createModalFilter(_options.id, _options.columns, _options.modalSelector, _$table);
                     }
                     //attributes: {
                     //    title: 'Search all users which has logged in the last week'
@@ -290,21 +534,29 @@ var DataGrid = (function (filter) {
                 },
             }
         }
+        //queryParams: ()=>function (params) {
+        //    debugger;
+        //    params.search = sessionStorage.get(`${this._options.id}-filterExpression`);
+        //    return params;
+        //}
     }
-    function DataGrid(options) {
-        _initOptions(options);
-        _createToolbar();
-        //_filter.CreateModalFilter(_options.id, _options.columns);
-        return _drawTable();
+    this._options = options;
+    this._$table;
+}
+DataTable.prototype = (function () {
+    function showFormModal($table, formSelector, url, title) {
+        debugger;
+        alert('aaaaa');
+        //ModalHelper.createModal($table, formSelector, url, title);
     }
-    function _initOptions(options) {
-        options.columns.unshift(_addCheckboxColumn());
-        options.columns.push(_addDefaultActionColumn());
-        var toolbarId = `${options.id}-table-toolbar`;
-        options.toolbar = `#${toolbarId}`;
-        _options = $.extend(true, _options, options);
+    function initOptions() {
+        this._options.columns.unshift(_addCheckboxColumn());
+        this._options.columns.push(_addDefaultActionColumn(this));
+        var toolbarId = `${this._options.id}-table-toolbar`;
+        this._options.toolbar = `#${toolbarId}`;
+        this._options = $.extend(true, this._defaultOptions, this._options);
     }
-    function _addDefaultActionColumn(options) {
+    function _addDefaultActionColumn(that) {
         return {
             field: 'tools',
             title: '<i class="fa fa-cog text-secondary-d1 text-130"></i>',
@@ -312,14 +564,15 @@ var DataGrid = (function (filter) {
             align: 'center',
             printIgnore: true,
             formatter: function (value, row, index, field) {
-                return '<div class="action-buttons">\
-                            <button class="btn btn-primary mx-1" >\
+                //test();
+                return `<div class="action-buttons">\
+                            <button class="btn btn-primary mx-1" onclick="ajaxEditItem('${that._options.id}', '${row.id}', '${row.title}');" >\
                               <i class="fa fa-pencil-alt text-105"></i>\
                             </button>\
-                            <button class="btn btn-danger mx-1">\
+                            <button class="btn btn-danger mx-1" onclick="ajaxDeleteItem('${that._options.id}','${row.id}', '${row.title}');">\
                               <i class="fa fa-trash-alt text-105"></i>\
                             </button>\
-                        </div>'
+                        </div>`
             }
         }
     }
@@ -331,31 +584,175 @@ var DataGrid = (function (filter) {
             //width: 64
         }
     }
-    function _createToolbar() {
-        var html = `<button id="${_options.id}-new-btn" class="btn btn-xs p-2 mr-2 bgc-white btn-lighter-red radius-3px">
+    function init() {
+        initOptions.call(this)
+        createToolbar.call(this);
+        drawTable.call(this);
+        tableEvents.call(this);
+    }
+    function createToolbar() {
+        var html = `<button id="${this._options.id}-new-btn" class="btn btn-xs p-2 mr-2 bgc-white btn-lighter-red radius-3px">
                         <i class="fa fa-plus text-125 mx-2px"></i>
                     </button>
-                     <button disabled id="${_options.id}-remove-btn" class="btn btn-xs p-2 mr-2 bgc-white btn-lighter-red radius-3px">
+                     <button disabled id="${this._options.id}-remove-btn" class="btn btn-xs p-2 mr-2 bgc-white btn-lighter-red radius-3px">
                         <i class="fa fa-trash-alt text-125 mx-2px"></i>
                     </button>`;
-        var $toolbar = $(`<div id=${_options.id}-table-toolbar>`);
+        var $toolbar = $(`<div id=${this._options.id}-table-toolbar>`);
         $toolbar.append(html);
-        $(`#${_options.id}`).closest('div.card-body').prepend($toolbar);
+        $(`#${this._options.id}`).closest('div.card-body').prepend($toolbar);
     }
-    function _tableEvents($table) {
+    function tableEvents() {
+        let id = this._options.id;
+        let formSelector = this._options.formSelector;
+        let $table = this._$table;
+        let newUrl = this._options.urls.create;
+        let deleteUrl = this._options.urls.delete;
+
         $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function (data, status, jqXHR) {
-            $(`#${_options.id}-remove-btn`).prop('disabled', !$table.bootstrapTable('getSelections').length)
+            $(`#${id}-remove-btn`).prop('disabled', !$table.bootstrapTable('getSelections').length)
         });
+
+        //regis event for delete(all) and new button 
+        var tableId = this._options.id;
+        $(`#${tableId}-new-btn`).off('click');
+        $(`#${tableId}-new-btn`).on('click', function () {
+            ModalHelper.createModal(tableId, formSelector, newUrl, 'Create new category', function () {
+                $table.bootstrapTable('refresh');
+            });
+        })
+
+        $(`#${tableId}-remove-btn`).off('click');
+        $(`#${tableId}-remove-btn`).on('click', function () {
+            let selectedItems = $table.bootstrapTable('getSelections');
+            let count = selectedItems.length;
+            let ids = '';
+            for (let i = 0; i < count; i++) {
+                ids += `${selectedItems[i].id},`;
+            }
+            let last = ids.lastIndexOf(',');
+            ids = ids.substring(0, last);
+            ajaxDeleteItem(id, ids, '', deleteUrl);
+            //ModalHelper.createModal($table, formSelector, deleteUrl);
+        })
     }
 
-    function _drawTable() {
-        var $selector = $(`#${_options.id}`);
-        var $table = $selector.bootstrapTable(_options);
-        _tableEvents($table);
-        return $table
+    function drawTable() {
+        var $selector = $(`#${this._options.id}`);
+        this._$table = $selector.bootstrapTable(this._options);
     }
+    
 
-    return DataGrid;
-})(FilterModal || {});
+    return {
+        create: init
+    }
+})()
+
+function ajaxSubmit(form, modal, isNew) {
+    try {
+        $.ajax({
+            type: 'POST',
+            url: form.action,
+            data: new FormData(form),
+            contentType: false,
+            processData: false,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("RequestVerificationToken",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+
+            },
+            success: function (res) {
+                if (res.isSuccess) {
+                    $(`#${modal}`).data('isSubmit', true);
+                    $(`#${modal} .modal-body`).html('');
+                    $(`#${modal} .modal-title`).html('');
+                    $(`#${modal}`).modal('hide');
+
+                    swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: isNew === 'true' ? `${res.data.title} is inserted successfull` : `${res.data.title} is updated successfull`,
+                        timer: 1000
+                    })
+                }
+                else
+                    $('#form-modal .modal-body').html(res.html);
+            },
+            error: function (err) {
+                console.log(err)
+            }
+        })
+        //to prevent default form submit event
+        return false;
+    } catch (ex) {
+        console.log(ex)
+    }
+}
+
+var ajaxDelete = function (id, title, url, callback) {
+    swal.fire({
+        icon: 'question',
+        title: title ? `Do you want to delete&nbsp;<b>${title}</b> ?` : 'Do you want to delete selected items ?',
+        //text: `${res.message}`,
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: `Delete`,
+        //timer: 1500
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `${url}?ids=[${id}]`,
+                type: 'post',
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                beforeSend: function (xhr) {
+                    //xhr.setRequestHeader('MY-XSRF-TOKEN', $('input:hidden[name="__RequestVerificationToken"]').val())
+                    xhr.setRequestHeader('RequestVerificationToken', $('input:hidden[name="__RequestVerificationToken"]').val())
+                }
+            }).done(function (res) {
+                if (res.isSuccess) {
+                    swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: res.data ? `${res.data.title} is deleted successfully` : `Deleting is successfully`,
+                        timer: 1500
+                    });
+                    //$table.draw();
+
+                    callback();
+                    return false;
+                }
+                else {
+                    swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `${res.message}`,
+                        showConfirmButton: true
+                        //timer: 1500
+                    });
+                    return false
+                }
+            }).fail(function (err) {
+                alert('error');
+            });
+        }
+    });
+}
 
 
+var ajaxEditItem = function (tableId, itemId, itemTitle) {
+    let $table = $(`#${tableId}`);
+    let option = $table.bootstrapTable('getOptions');
+    ModalHelper.createModal(option.id, option.formSelector, option.urls.update + '/' + itemId, itemTitle, function () {
+        $table.bootstrapTable('refresh');
+    });
+    //console.log(t);
+}
+var ajaxDeleteItem = function (tableId, itemIds, itemTitle, url) {
+    let $table = $(`#${tableId}`);
+    let option = $table.bootstrapTable('getOptions');
+
+    ajaxDelete(itemIds, itemTitle, option.urls.delete, function () {
+        let $table = $(`#${tableId}`);
+        $table.bootstrapTable("refresh");
+    })
+}

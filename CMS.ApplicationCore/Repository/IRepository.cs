@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CMS.ApplicationCore.DTO;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace CMS.ApplicationCore
     public interface IRepository<T> where T:class
     {
         public IQueryable<T> GetItems();
-        public IQueryable<T> GetItems(int currentPage, int pageSize, Expression<Func<T, bool>> condition = null);
+        public IQueryable<T> GetItems(int currentPage, int pageSize, Expression<Func<T, bool>> condition = null, List<SorterRequest> sorters = null);
         public T GetItem(object Id);
         public int Count(Expression<Func<T, bool>> condition = null);
 

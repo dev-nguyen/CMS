@@ -1,4 +1,5 @@
 ﻿using CMS.ApplicationCore;
+using CMS.ApplicationCore.DTO;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -39,11 +40,14 @@ namespace CMS.Infrastructure
             return _dbSet.AsQueryable();
         }
 
-        public IQueryable<T> GetItems(int currentPage, int pageSize, Expression<Func<T, bool>> condition = null)
+        public IQueryable<T> GetItems(int currentPage, int pageSize, Expression<Func<T, bool>> condition = null, List<SorterRequest> sorters = null)
         {
+            //var a = Common.GetOrderByFunction<T>(sorters);
             IQueryable<T> query = _dbSet;
             if (condition != null)
-                query.Where(condition);
+                query = query.Where(condition);
+            //query = (sorters != null) ? Common.CreateSortingExpression<T>(sorters, query) : query;
+            query = query.OrderBy(sorters);
             return query.Skip(currentPage).Take(pageSize);
         }
 
@@ -51,7 +55,7 @@ namespace CMS.Infrastructure
         {
             IQueryable<T> query = _dbSet;
             if (condition != null)
-                query.Where(condition);
+                query = query.Where(condition);
 
             return query.Count();
         }

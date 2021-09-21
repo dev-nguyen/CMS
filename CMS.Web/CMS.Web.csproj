@@ -41,10 +41,12 @@
     <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\bootstrap-table.min.js" />
     <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\extensions\export\bootstrap-table-export.js" />
     <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\extensions\mobile\bootstrap-table-mobile.js" />
+    <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\extensions\multiple-sort\bootstrap-table-multiple-sort.min.js" />
     <None Include="wwwroot\admin\node_modules\bootstrap-table\dist\extensions\print\bootstrap-table-print.js" />
     <None Include="wwwroot\admin\node_modules\bootstrap\dist\js\bootstrap.js" />
     <None Include="wwwroot\admin\node_modules\jquery\dist\jquery.js" />
     <None Include="wwwroot\admin\node_modules\popper.js\dist\umd\popper.js" />
+    <None Include="wwwroot\admin\node_modules\sweetalert2\dist\sweetalert2.all.js" />
     <None Include="wwwroot\admin\node_modules\tableexport.jquery.plugin\tableExport.min.js" />
   </ItemGroup>
 

@@ -2,7 +2,7 @@
 
 
 @Html.AntiForgeryToken()
-<form id="editFrm" method="post" action="/Admin/Category/Edit" @*onsubmit="return ajaxSubmit(this, 'editModal')*@">
+<form id="editFrm" method="post" isNew="false" action="/Admin/Category/Edit" @*onsubmit="return ajaxSubmit(this, 'editModal')*@">
     <input type="hidden" name="Id" value="@Model.Id" />
     <div class="form-group">
         <label for="exampleInputEmail1">Email address</label>

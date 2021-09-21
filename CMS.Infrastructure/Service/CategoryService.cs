@@ -1,4 +1,5 @@
 ﻿using CMS.ApplicationCore;
+using CMS.ApplicationCore.DTO;
 using CMS.ApplicationCore.Service;
 using CMS.Entity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,10 +30,9 @@ namespace CMS.Infrastructure.Service
             _unitOfWork.Commit();
             return category;
         }
-
-        public IQueryable<Category> GetCategories(int currentPage, int Pagesize)
+        public IQueryable<Category> GetCategories(int currentPage, int Pagesize, Expression<Func<Category, bool>> prediction = null, List<SorterRequest> sorters = null)
         {
-            return _categoryRepository.GetItems(currentPage, Pagesize);
+            return _categoryRepository.GetItems(currentPage, Pagesize, prediction, sorters);
         }
         public int Count(Expression<Func<Category, bool>> condition = null)
         {

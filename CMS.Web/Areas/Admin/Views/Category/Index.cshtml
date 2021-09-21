@@ -6,77 +6,78 @@
 
 
 @*<div class="modal modal-xl fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-primary-d3" id="exampleModalLabel">
-                    Modal title
-                </h5>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary-d3" id="exampleModalLabel">
+                        Modal title
+                    </h5>
 
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
-            <div class="modal-body text-center">
-                <div class="form-row">
-                    <div class="col-md-3">
-                        <select class="form-control">
-                            <option value="value">Please select column</option>
-                            <option value="value">Column 1</option>
-                            <option value="value">Column 2</option>
-                            <option value="value">Column 3</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select  class="form-control">
-                            <option value="value">Please select column</option>
-                            <option value="value">Greater than or equal to ab fds dsf</option>
-                            <option value="value">Column 2</option>
-                            <option value="value">Column 3</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <input class="form-control" type="text" name="value" value="" />
-                    </div>
-                    <div class="col-md-2">
-                        <select class="form-control">
-                            <option value="value">And</option>
-                            <option value="value">Or</option>
-                        </select>
-                    </div>
-                    <div class="col-md-1">
-                        <button class="btn btn-default" style="border-radius:50%"><i class="fa fa-plus"></i></button>
-                        <button class="btn btn-danger" style="border-radius:50%"><i class="fa fa-times"></i></button>
+                <div class="modal-body text-center">
+                    <div class="form-row">
+                        <div class="col-md-3">
+                            <select class="form-control">
+                                <option value="value">Please select column</option>
+                                <option value="value">Column 1</option>
+                                <option value="value">Column 2</option>
+                                <option value="value">Column 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select  class="form-control">
+                                <option value="value">Please select column</option>
+                                <option value="value">Greater than or equal to ab fds dsf</option>
+                                <option value="value">Column 2</option>
+                                <option value="value">Column 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input class="form-control" type="text" name="value" value="" />
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-control">
+                                <option value="value">And</option>
+                                <option value="value">Or</option>
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn btn-default" style="border-radius:50%"><i class="fa fa-plus"></i></button>
+                            <button class="btn btn-danger" style="border-radius:50%"><i class="fa fa-times"></i></button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary px-4" data-dismiss="modal">
-                    Close
-                </button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary px-4" data-dismiss="modal">
+                        Close
+                    </button>
 
-                <button type="button" class="btn btn-primary">
-                    Save changes
-                </button>
+                    <button type="button" class="btn btn-primary">
+                        Save changes
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-</div>*@
+    </div>*@
 
-
-<div id="modal"></div>
+@Html.AntiForgeryToken()
+<div id="filterModal"></div>
+<div id="formModal"></div>
 
 
 <div class="page-content container container-plus">
     <div class="page-header">
         <h1 class="page-title text-primary-d2">
-            Bootstrap Table
-            <small class="page-info text-secondary-d2">
+            Quản lý danh mục
+            @*<small class="page-info text-secondary-d2">
                 <i class="fa fa-angle-double-right text-80"></i>
                 extended tables plugin
-            </small>
+            </small>*@
         </h1>
     </div>
 
@@ -85,9 +86,9 @@
         <div class="card-header bgc-primary-d1 text-white border-0">
             <h4 class="text-120">
                 <span class="text-90">
-                    Results for
+                    Danh sách
                 </span>
-                "Latest Products"
+                "Danh mục"
             </h4>
         </div>
 
@@ -103,139 +104,97 @@
             </table>
         </div>
     </div>
-
-
-
-
-
-
-
-
-
-
-    <div class="card bcard">
-        <div class="card-header bgc-primary-d1 text-white border-0">
-            <h4 class="text-120">
-                <span class="text-90">
-                    Results for
-                </span>
-                "Latest Products"
-            </h4>
-        </div>
-
-        <div class="card-body p-0 border-x-1 border-b-1 brc-default-m4 radius-0 overflow-hidden">
-            @*<div id="table-toolbar">
-                    <button disabled id="remove-btn" class="btn btn-xs p-2 mr-2 bgc-white btn-lighter-red radius-3px">
-                        <i class="fa fa-trash-alt text-125 mx-2px"></i>
-                    </button>
-                </div>*@
-
-            <table class="table text-dark-m2 text-95 bgc-white ml-n1px" id="table1">
-                <!-- table -->
-            </table>
-        </div>
-    </div>
-
-
-
-
-
 </div>
 
 @section Scripts{
-    <script src="/admin/dist/js/main.js"></script>
+
+    
     <script>
-        var options = {
-            id:'table',
-            pageSize: 10,
-            tableId: 'table',
-            toolbar: "#table-toolbar",
-            url:`/Admin/Category/LoadData`,
-            columns: [
-                {
-                    field: 'id',
-                    title: 'Mã số danh mục',
-                    sortable: true,
-                    type:'string',
+
+        $(window).on('load', function () {
+            sessionStorage.removeItem(`table-filter`);
+            var options = {
+                showMultiSort: true,
+                showMultiSortButton: true,
+                id: 'table',                
+                modalSelector: 'filterModal',
+                formSelector: 'formModal',
+                pageSize: 10,
+                tableId: 'table',
+                toolbar: "#table-toolbar",
+                sortName: 'created',
+                sortOrder: 'desc',
+                urls: {
+                    load: `/Admin/Category/LoadData`,
+                    create: `/Admin/Category/Create`,
+                    update: `/Admin/Category/Edit`,
+                    delete: `/Admin/Category/Delete`
                 },
-                {
-                    field: 'title',
-                    title: 'Tên danh mục',
-                    sortable: true,
-                    type: 'string',
-                },
-                {
-                    field: 'created',
-                    title: 'Ngày tạo',
-                    sortable: true,
-                    type: 'datetime',
-                },
-                {
-                    field: 'modified',
-                    title: 'Ngày chỉnh sửa',
-                    sortable: true,
-                    type: 'datetime'
-                },
-                {
-                    field: 'active',
-                    title: 'Hoạt động',
-                    sortable: true,
-                    type: 'boolean',
-                    formatter: function (value, row, index, field) {
-                        let checked = value ? 'checked' : '';
-                        return `<input disabled type="checkbox" ${checked} class="mr-1"  />`
+                queryParams: function (params) {
+                    debugger;
+                    var filter = sessionStorage.getItem(`${this.id}-filter`);
+                    if (filter && JSON.parse(filter).length > 0) {
+                        params.filter = filter
                     }
-                }
-            ]
-        };
-        var dataGrid = new DataGrid(options);
-
-
-
-        var options1 = {
-            id: 'table1',
-            pageSize: 10,
-            tableId: 'table1',
-            toolbar: "#table-toolbar",
-            url: `/Admin/Category/LoadData`,
-            columns: [
-                {
-                    field: 'id',
-                    title: 'Mã số danh mục',
-                    sortable: true,
-                    type: 'string',
-                },
-                {
-                    field: 'title',
-                    title: 'Tên danh mục',
-                    sortable: true,
-                    type: 'string',
-                },
-                {
-                    field: 'created',
-                    title: 'Ngày tạo',
-                    sortable: true,
-                    type: 'datetime',
-                },
-                {
-                    field: 'modified',
-                    title: 'Ngày chỉnh sửa',
-                    sortable: true,
-                    type: 'datetime'
-                },
-                {
-                    field: 'active',
-                    title: 'Hoạt động',
-                    sortable: true,
-                    type: 'boolean',
-                    formatter: function (value, row, index, field) {
-                        let checked = value ? 'checked' : '';
-                        return `<input disabled type="checkbox" ${checked} class="mr-1"  />`
+                    if (params.multiSort) {
+                        let mSort = params.multiSort;
+                        params.multiSort = JSON.stringify(mSort);
                     }
-                }
-            ]
-        };
-        var dataGrid1 = new DataGrid(options1);
+                    return params;
+                },
+                columns: [
+                    {
+                        field: 'id',
+                        title: 'Mã số danh mục',
+                        sortable: true,
+                        type: 'string',
+                        visible: false
+                    },
+                    {
+                        field: 'title',
+                        title: 'Tên danh mục',
+                        sortable: true,
+                        type: 'string',
+                    },
+                    {
+                        field: 'created',
+                        title: 'Ngày tạo',
+                        sortable: true,
+                        type: 'datetime',
+                        formatter: function (value, row, index, field) {
+                            //let value = new Date(value);
+                            //let hours = value.getHours();
+                            //console.log(
+                            //    new Date(value).toLocaleString()//('vi-VN', { hour: 'numeric', minute: 'numeric', hour12: true })
+                            //);
 
+                            return formatDateTime('vi-VN', value);
+                            //return new Date(value).toString();//.toLocaleDateString('vi-VN');// + " " + new Date(value).getHours() + ":" new Date(value)..getMinutes() ;
+                        }
+                    },
+                    {
+                        field: 'modified',
+                        title: 'Ngày chỉnh sửa',
+                        sortable: true,
+                        type: 'datetime',
+                        formatter: function (value, row, index, field) {
+                            return formatDateTime('vi-VN', value);
+                        }
+                    },
+                    {
+                        field: 'active',
+                        title: 'Hoạt động',
+                        sortable: true,
+                        type: 'boolean',
+                        formatter: function (value, row, index, field) {
+                            let checked = value ? 'checked' : '';
+                            return `<input disabled type="checkbox" ${checked} class="mr-1"  />`
+                        }
+                    }
+                ]
+            };
+            var table = new DataTable(options);
+            table.create();
+        });
     </script>
 }

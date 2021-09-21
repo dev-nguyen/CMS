@@ -11,7 +11,7 @@
 
 
 @Html.AntiForgeryToken()
-<form id="frm" method="post" action="/Admin/Category/Create" @*onsubmit="return ajaxSubmit(this, 'my-modal')"*@>
+<form id="frm" method="post" isNew="true" action="/Admin/Category/Create" @*onsubmit="return ajaxSubmit(this, 'my-modal')"*@>
     <div class="form-group">
         <label for="exampleInputEmail1">Email address</label>
         <input type="text" class="form-control" name="Title" placeholder="Title">
@@ -26,7 +26,7 @@
                 <option>aaaaaaaaaaaaaa</option>
             </select>
             <span class="input-group-append">
-                <button type="button" class="btn btn-default btn-flat">
+                <button id="btnClick" type="button" class="btn btn-default btn-flat">
                     <i class="fa fa-plus" aria-hidden="true"></i>
                 </button>
             </span>
@@ -34,7 +34,16 @@
     </div>
 </form>
 
-
+<script>
+    alert('aaaa');
+    debugger;
+    $(`#btnClick`).on('click', function () {
+        alert('aaa');
+        ModalHelper.createModal('aaaaa', 'formModal', `/Admin/Category/Create`, 'Create new category', function () {
+            alert('clicl child modal');
+        });
+    })
+</script>
 
 
 <button type="button" class="btn btn-primary" data-toggle="modal" id="btn">

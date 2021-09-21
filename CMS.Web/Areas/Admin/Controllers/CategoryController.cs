@@ -8,6 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using CMS.Infrastructure;
+using System.Linq.Expressions;
 
 namespace CMS.Web.Areas.Admin.Controllers
 {
@@ -133,14 +137,51 @@ namespace CMS.Web.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult LoadData(int offset, int limit, string search, string sort, string order)
+        public IActionResult LoadData(int offset, int limit, string search, string sort, string order, string multiSort, string filter)
         {
-            var result = _categoryService.GetCategories(offset, limit);
-            int total = _categoryService.Count();
-            return Json(new { total = total, totalNotFiltered = total, rows = result });
-        }
+            // adding sort and order into list because after chosing multiple sort, user can click header to sort
+            List<SorterRequest> sorters = null;// = new List<SorterRequest>();
+            List<FilterRequest> filters = null;
 
-        
+            if (!string.IsNullOrEmpty(multiSort))
+            {
+                sorters = JsonSerializer.Deserialize<List<SorterRequest>>(multiSort);
+                if (!string.IsNullOrEmpty(sort) && !string.IsNullOrEmpty(order))
+                {
+                    sorters.Add(new SorterRequest() {
+                        sortName = sort,
+                        sortOrder = order
+                    });
+                }
+            }
+            else if (!string.IsNullOrEmpty(sort) && !string.IsNullOrEmpty(order))
+            {
+                sorters = new List<SorterRequest>();
+                sorters.Add(new SorterRequest()
+                {
+                    sortName = sort,
+                    sortOrder = order
+                });
+            }
+
+            if (!string.IsNullOrEmpty(filter))
+            {
+                filters = JsonSerializer.Deserialize<List<FilterRequest>>(filter);
+                filters.LastOrDefault().logic = "and";
+                if (!string.IsNullOrEmpty(search))
+                    filters.AddRange(Common.BuildValuesForFreeText<Category>(search));
+
+            }
+            //else if(!string.IsNullOrEmpty(search))
+            //{
+            //    filters = Common.BuildValuesForFreeText<Category>(search);
+            //}
+            Expression<Func<Category, bool>> prediction = (filters != null) ? Common.CreateFilterExpression<Category>(filters) : null;
+           
+            var result = _categoryService.GetCategories(offset, limit, prediction, sorters);
+            int total = _categoryService.Count(prediction);
+            return Json(new { total = total, totalNotFiltered = total, rows = result });
+        }        
     }
 
 
